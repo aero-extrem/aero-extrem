@@ -1,5 +1,7 @@
 Flugzeug Sim von Nick, Vincent, Luca und Richie
 
+Status: [![Build Status](https://travis-ci.org/aero-extrem/aero-extrem.svg?branch=master)](https://travis-ci.org/aero-extrem/aero-extrem)
+
 |        | Projektinfo       |
 | ------ | ----------------- |
 | Jahr   | Q11 2016/2017     |
