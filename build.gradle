@@ -1,0 +1,51 @@
+buildscript {
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+		jcenter()
+	}
+}
+
+allprojects {
+	// IntelliJ IDEA support
+	apply plugin: "idea"
+
+	version = '1.0'
+	ext {
+		// libgdx Konstanten
+		appName = "aero-extrem"
+		gdxVersion = '1.9.6'
+	}
+
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+		maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+	}
+}
+
+// Benötigtes für Desktop
+project(":desktop") {
+	apply plugin: "java"
+
+	dependencies {
+		compile project(":core")
+		compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+		compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+		compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+		compile "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-desktop"
+	}
+}
+
+// Benötigtes für alle Platformen
+project(":core") {
+	apply plugin: "java"
+
+	dependencies {
+		compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+		compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+		compile "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
+	}
+}

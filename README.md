@@ -12,3 +12,17 @@ Flugzeug Sim von Nick, Vincent, Luca und Richie
 | Quellcode der Website | https://github.com/aero-extrem/aero-extrem.github.io |
 | Quellcode             | https://github.com/aero-extrem/aero-extrem           |
 | Fortschritt           | https://github.com/orgs/aero-extrem/projects/1       |
+
+#### Starten:
+
+| Windows      | macOS + Linux |
+| ------------ | ------------- |
+| CMD> run.bat | ./run.sh      |
+
+#### Enthält:
+
+* Code vom Aero EXTREM Team (Lizenz noch zu veröffentlichen)
+* __Gradle Wrapper 2.14.1 [gradle.org](https://gradle.org)__
+  (`gradle/`, `gradlew`, `gradlew.bat`):
+  Gradle Projekte benutzen ohne Gradle-Installation
+* Der Rest wird beim Starten heruntergeladen

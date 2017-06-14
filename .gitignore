@@ -1,0 +1,12 @@
+-- Dateien, die nicht im Repo erscheinen:
+
+-- Gradle
+.gradle/
+
+-- IntelliJ IDEA
+.idea/
+*.iml
+
+-- Compiler output
+desktop/build/
+core/build/
