@@ -36,10 +36,18 @@ public class Core implements ApplicationListener {
 			10, TimeUnit.SECONDS,
 			new LinkedBlockingQueue<>());
 
+	// Singleton-Pattern
+	private static Core instance;
+	public static Core getInstance() {
+		return instance;
+	}
+
 	/** Nach Initialisierung der Engine */
 	@Override
 	public void create() {
 		System.out.println("Aero EXTREM Engine startet.");
+
+		instance = this;
 
 		assert scenario != null;
 		scenario.create();
