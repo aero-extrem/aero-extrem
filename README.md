@@ -29,3 +29,14 @@ Status: [![Build Status](https://travis-ci.org/aero-extrem/aero-extrem.svg?branc
   (`gradle/`, `gradlew`, `gradlew.bat`):
   Gradle Projekte benutzen ohne Gradle-Installation
 * Der Rest wird beim Starten heruntergeladen
+
+#### Lizenzen:
+
+* Neon UI Ver. 1
+	```
+	Created by Raymond "Raeleus" Buckley
+	Visit ray3k.wordpress.com for games, tutorials, and much more!
+	
+	Neon UI can be used under the CC BY license.
+	http://creativecommons.org/licenses/by/4.0/
+	```
