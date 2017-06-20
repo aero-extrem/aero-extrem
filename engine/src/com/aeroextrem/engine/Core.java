@@ -104,6 +104,16 @@ public class Core implements ApplicationListener {
 			scenario.resume();
 	}
 
+	/** Fährt die Engine herunter */
+	public void shutdown() {
+		if(!isLoading && scenario != null) {
+			isLoading = true;
+			scenario.dispose();
+		}
+
+		Gdx.app.exit();
+	}
+
 	/** Vor Ausschalten der Engine */
 	@Override
 	public void dispose() {
