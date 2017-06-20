@@ -1,6 +1,5 @@
 package com.aeroextrem.engine;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -13,10 +12,17 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /** Core ist die Wurzel der Engine. */
-public class Core extends ApplicationAdapter {
+public class Core implements ApplicationListener {
 
 	/** Anzahl der Hintergrund Threads für Berechnungen, die in render() ungeeignet sind. */
 	private static final int BACKGROUND_THREADS = 1;
+
+	/** Erstellt die Engine
+	 *
+	 * @param firstScenario Erstes Szenario der Engine */
+	public Core(@NotNull ApplicationListener firstScenario) {
+		scenario = firstScenario;
+	}
 
 	/** Momentan geladenes Szenario */
 	@Nullable
@@ -34,6 +40,9 @@ public class Core extends ApplicationAdapter {
 	@Override
 	public void create() {
 		System.out.println("Aero EXTREM Engine startet.");
+
+		assert scenario != null;
+		scenario.create();
 	}
 
 	/** Gibt ein Bild aus. Wird bestenfalls 60 mal in der Sekunde aufgerufen. */
@@ -73,6 +82,20 @@ public class Core extends ApplicationAdapter {
 			scenario.resize(width, height);
 	}
 
+	/** Pausiert die Anzeige des Szenarios. */
+	@Override
+	public void pause() {
+		if(scenario != null)
+			scenario.pause();
+	}
+
+	/** Fährt die Anzeige des Szenarios fort. */
+	@Override
+	public void resume() {
+		if(scenario != null)
+			scenario.resume();
+	}
+
 	/** Vor Ausschalten der Engine */
 	@Override
 	public void dispose() {
@@ -100,13 +123,20 @@ public class Core extends ApplicationAdapter {
 		});
 	}
 
-	/** Gibt das jetzige Szenario aus. */
+	/** Gibt das jetzige Szenario aus.
+	 *
+	 * @return Momentan geladenes Szenario oder null, falls keins geladen ist. */
 	@Nullable
 	public ApplicationListener getCurrentScenario() {
-		return scenario;
+		if(!isLoading)
+			return scenario;
+		else
+			return null;
 	}
 
-	/** Führt eine Aufgabe parallel aus */
+	/** Führt eine Aufgabe parallel aus
+	 *
+	 * @param task Aufgabe */
 	public void asyncExec(@NotNull Runnable task) {
 		/* Diese Art, nebenläufige Aufgaben auszuführen,
 		 * ist sehr viel effizienter als das Erstellen
