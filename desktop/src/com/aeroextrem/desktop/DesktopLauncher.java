@@ -14,6 +14,10 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		// Startet die LWJGL
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.backgroundFPS = 20;
+		config.useHDPI = true;
+		config.vSyncEnabled = true;
+
 		Core engine = new Core(new Menu());
 
 		new LwjglApplication(engine, config);
