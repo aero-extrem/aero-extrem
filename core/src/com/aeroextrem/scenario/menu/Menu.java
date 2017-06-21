@@ -1,15 +1,13 @@
 package com.aeroextrem.scenario.menu;
 
 import com.aeroextrem.engine.Core;
+import com.aeroextrem.scenario.simulation.Simulation;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 /** Hauptmenü-Szenario nach dem MVC-Pattern.
@@ -21,7 +19,7 @@ public class Menu extends ApplicationAdapter {
 	private Stage stage;
 	private Skin skin;
 	private Window window;
-	private TextButton quitBtn;
+	private TextButton quit, simulation, options;
 
 	/** Erstellt das Hauptmenü */
 	@Override
@@ -42,11 +40,28 @@ public class Menu extends ApplicationAdapter {
 		// TODO: Ersetzen durch Inhalt
 		Label nothingHere = new Label("Die Simulation ist noch nicht ganz fertig.", skin);
 
-		// Quit Button
-		quitBtn = new TextButton("Quit", skin);
-		quitBtn.addListener(new ClickListener() {
-			@Override public void clicked(InputEvent event, float x, float y) {
+		Table actions = new Table(skin);
+		simulation = new TextButton("Simulation >", skin);
+		options = new TextButton("Optionen >", skin);
+		quit = new TextButton("Beenden", skin);
+
+		actions.add(simulation);
+		actions.add(options);
+		actions.row();
+		actions.add(quit);
+		actions.pack();
+
+		quit.addListener(new SingleClickListener() {
+			@Override public boolean singleClicked(float x, float y) {
 				Core.getInstance().shutdown();
+				return true;
+			}
+		});
+
+		simulation.addListener(new SingleClickListener() {
+			@Override public boolean singleClicked(float x, float y) {
+				Core.getInstance().setScenario(new Simulation());
+				return true;
 			}
 		});
 
@@ -54,7 +69,9 @@ public class Menu extends ApplicationAdapter {
 		window.row();
 		window.add(nothingHere);
 		window.row();
-		window.add(quitBtn);
+		window.add(actions);
+		window.row();
+		window.add(quit);
 
 		window.pack();
 		stage.addActor(window);
@@ -70,7 +87,7 @@ public class Menu extends ApplicationAdapter {
 		stage.act();
 		stage.draw();
 
-		if(quitBtn.isPressed())
+		if(quit.isPressed())
 			Core.getInstance().dispose();
 	}
 
@@ -86,6 +103,29 @@ public class Menu extends ApplicationAdapter {
 	public void dispose() {
 		skin.dispose();
 		stage.dispose();
+	}
+
+	private static class SingleClickListener extends ClickListener {
+		public boolean singleClicked(float x, float y) {
+			return false;
+		}
+
+		boolean singleClick = false;
+
+		@Override
+		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			if(!singleClick) {
+				singleClick = true;
+				return singleClicked(x, y);
+			}
+
+			return false;
+		}
+
+		@Override
+		public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+			singleClick = false;
+		}
 	}
 
 }

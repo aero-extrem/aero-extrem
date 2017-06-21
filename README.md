@@ -32,11 +32,18 @@ Status: [![Build Status](https://travis-ci.org/aero-extrem/aero-extrem.svg?branc
 
 #### Lizenzen:
 
-* Neon UI Ver. 1
+* Neon UI Ver. 1 (Dateien unter `core/assets/skin`)
 	```
 	Created by Raymond "Raeleus" Buckley
 	Visit ray3k.wordpress.com for games, tutorials, and much more!
 	
 	Neon UI can be used under the CC BY license.
 	http://creativecommons.org/licenses/by/4.0/
+	```
+* GifDecoder (Dateien unter `engine/src/……/util/GifDecoder.java`)
+	```
+	Copyright by Johannes Borchardt
+	 * LibGdx conversion 2014 by Anton Persson
+	 * Released under Apache 2.0
+	 * https://code.google.com/p/animated-gifs-in-android/
 	```

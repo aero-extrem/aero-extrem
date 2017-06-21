@@ -2,7 +2,6 @@ package com.aeroextrem.engine;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,6 +29,9 @@ public class Core implements ApplicationListener {
 	/** Lädt jetziges Szenario noch? */
 	private boolean isLoading = false;
 
+	/** Lade-Bildschirm */
+	private ApplicationListener loadingScreen;
+
 	/** Hintergrund Threads */
 	private final ExecutorService threadPool = new ThreadPoolExecutor(
 			BACKGROUND_THREADS, BACKGROUND_THREADS,
@@ -46,6 +48,9 @@ public class Core implements ApplicationListener {
 	@Override
 	public void create() {
 		System.out.println("Aero EXTREM Engine startet.");
+
+		loadingScreen = new LoadingScreen();
+		loadingScreen.create();
 
 		instance = this;
 
@@ -77,9 +82,8 @@ public class Core implements ApplicationListener {
 		if(scenario != null && !isLoading) {
 			scenario.render();
 		} else {
-			// Grauer Bildschirm
-			Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1f);
-			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+			// Lade-Bildschirm
+			loadingScreen.render();
 		}
 	}
 
@@ -88,6 +92,7 @@ public class Core implements ApplicationListener {
 	public void resize(int width, int height) {
 		if(scenario != null)
 			scenario.resize(width, height);
+		loadingScreen.resize(width, height);
 	}
 
 	/** Pausiert die Anzeige des Szenarios. */
@@ -117,12 +122,17 @@ public class Core implements ApplicationListener {
 	/** Vor Ausschalten der Engine */
 	@Override
 	public void dispose() {
+		loadingScreen.dispose();
 		System.out.println("Aero EXRTEM Engine fährt herunter.");
 	}
 
 	/** Setzt das Szenario
 	 *
-	 * @param listener Neues Szenario */
+	 * Lädt das Szenario und setzt es in den Vordergrund.<br>
+	 * Das alte Szenario wird entfernt und freigegeben.<br>
+	 * Während der Ladezeit wird ein Ladebildschirm angezeigt.
+	 *
+	 * @param listener Neues, uninitialisiertes Szenario */
 	public void setScenario(@Nullable ApplicationListener listener) {
 		if(scenario != null)
 			scenario.dispose();
@@ -135,6 +145,7 @@ public class Core implements ApplicationListener {
 		scenario = listener;
 		isLoading = true;
 		// Lädt das Szenario parallel
+		// Zeigt einen Ladebildschirm während create() läuft
 		asyncExec(() -> {
 			scenario.create();
 			isLoading = false;
