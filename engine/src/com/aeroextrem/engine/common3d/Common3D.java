@@ -1,7 +1,9 @@
 package com.aeroextrem.engine.common3d;
 
+import com.aeroextrem.engine.ScenarioAdapter;
 import com.aeroextrem.engine.common3d.behaviour.*;
-import com.badlogic.gdx.ApplicationAdapter;
+import com.aeroextrem.engine.common3d.resource.*;
+import com.aeroextrem.engine.resource.GameResource;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
@@ -9,23 +11,25 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.collision.*;
-import com.badlogic.gdx.physics.bullet.dynamics.btConstraintSolver;
-import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
-import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
-import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
+import com.badlogic.gdx.physics.bullet.dynamics.*;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Disposable;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Random;
 
 import static com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute.AmbientLight;
 
 /** Basis für ein 3D Szenario */
-public abstract class Common3D extends ApplicationAdapter {
+public abstract class Common3D extends ScenarioAdapter {
 
 	/** Umgebung / Belichtungsinformationen erstellen
 	 *
@@ -66,6 +70,13 @@ public abstract class Common3D extends ApplicationAdapter {
 	 * @param sb 2D Renderer */
 	protected abstract void renderUI(SpriteBatch sb);
 
+	protected Random rand = new Random();
+
+	// Instance map
+	private HashMap<InstanceIdentifier, BehavingInstance> instances;
+	// Count of instances of type
+	private HashMap<GameResource, Integer> instanceCount;
+
 	// Behaviours
 	private Array<BehaviourVisual> behavioursVisual;
 	private Array<BehaviourPhysics> behavioursPhysics;
@@ -90,9 +101,6 @@ public abstract class Common3D extends ApplicationAdapter {
 	/** Bereitet das Szenario vor */
 	@Override
 	public void create() {
-		// Load Bullet Phys Engine
-		Bullet.init();
-
 		// 3D Renderer
 		modelBatch = new ModelBatch();
 		cam = createCamera();
@@ -100,6 +108,18 @@ public abstract class Common3D extends ApplicationAdapter {
 
 		// 2D Renderer
 		spriteBatch = new SpriteBatch();
+	}
+
+	@Override
+	public void load() {
+		// Load Bullet Phys Engine
+		Bullet.init();
+
+		instances = new HashMap<>(10);
+		instanceCount = new HashMap<>(10);
+
+		// Visuell
+		environment = createEnvironment();
 
 		// Behaviours
 		despos = new Array<>();
@@ -155,6 +175,123 @@ public abstract class Common3D extends ApplicationAdapter {
 
 		for(Disposable d : despos)
 			d.dispose();
+	}
+
+	/** Gibt alle Instanzen dieser Ressource zurück
+	 *
+	 * @param resource Klasse der Ressource */
+	public Array<InstanceIdentifier> getInstances(GameResource resource) {
+		Array<InstanceIdentifier> array = new Array<>();
+		instances.keySet().forEach(identifier -> {
+			if(identifier.resource == resource) {
+				array.add(identifier);
+			}
+		});
+		return array;
+	}
+
+	/** Setzt eine Ressource in die Welt
+	 *
+	 * @param res Ressource */
+	public InstanceIdentifier spawn(GameResource res) {
+		// Neue ID erstellen
+		InstanceIdentifier id = new InstanceIdentifier(res, rand.nextInt());
+		// Neue Instanz erstellen
+		ModelInstance modelInstance = new ModelInstance(res.getModel());
+
+		// Änderungen schreiben
+		instances.put(id, new BehavingInstance<>(modelInstance));
+
+		int count = instanceCount.get(res);
+		instanceCount.put(res, count+1);
+
+		return id;
+	}
+
+	/** Setzt eine physikalische Ressource in die Welt
+	 *
+	 * @param res Ressource, die erstellt werden soll. */
+	public InstanceIdentifier spawn(PhysicsResource res) {
+		// Neue ID erstellen
+		InstanceIdentifier id = new InstanceIdentifier(res, rand.nextInt());
+		// Neue Instanz erstellen
+		PhysicsInstance physInstance = new PhysicsInstance(res, dynamicsWorld);
+
+		// Änderungen schreiben
+		instances.put(id, new BehavingInstance<>(physInstance));
+
+		int count = instanceCount.get(res);
+		instanceCount.put(res, count+1);
+
+		return id;
+	}
+
+	/** Entfernt die Instanz.
+	 *
+	 * @param identifier ID der Instanz */
+	public boolean kill(InstanceIdentifier identifier) {
+		// Gibt es Instanzen des Typs?
+		int count = instanceCount.get(identifier.resource);
+		if(count <= 0)
+			return false;
+
+		// Gibt es Instanzen mit dieser ID?
+		BehavingInstance instance = instances.get(identifier);
+		if(instance == null)
+			return false;
+
+		// Entfernen
+		instanceCount.put(identifier.resource, count-1);
+		instances.remove(identifier);
+		if(instance.instance instanceof Disposable) {
+			((Disposable) instance.instance).dispose();
+		}
+		return true;
+	}
+
+	/** Weist einer Instanz ein Behaviour zu. */
+	public boolean addBehaviour(InstanceIdentifier identifier, String behaviourName, BehaviourBase behaviour) {
+		// Gibt es Instanzen mit dieser ID?
+		BehavingInstance instance = instances.get(identifier);
+		if(instance == null)
+			return false;
+
+		behaviour.onCreate(identifier.resource);
+		// FIXME Hässlicher Code
+		if(behaviour instanceof BehaviourVisual) {
+			if(!(instance.instance instanceof ModelInstance)) {
+				System.err.println("Engine: Tried to apply a visual behaviour on a non-visual instance!");
+				return false;
+			}
+			((BehaviourVisual) behaviour).onCreateVisuals(((ModelInstance) instance.instance));
+			behavioursVisual.add((BehaviourVisual) behaviour);
+		}
+		if(behaviour instanceof BehaviourPhysics) {
+			if(!(instance.instance instanceof PhysicsInstance)) {
+				System.err.println("Engine: Tried to apply a physical behaviour on a non-physical instance!");
+				return false;
+			}
+			((BehaviourPhysics) behaviour).onBindPhysics(dynamicsWorld, (PhysicsInstance) instance.instance);
+			behavioursPhysics.add((BehaviourPhysics) behaviour);
+		}
+
+		instance.behaviours.put(behaviourName, behaviour);
+		return true;
+	}
+
+	/** Entfernt ein Behaviour von einer Instanz. */
+	public boolean removeBehaviour(InstanceIdentifier identifier, String behaviourName) {
+		// Gibt es Instanzen mit dieser ID?
+		BehavingInstance<Object> instance = instances.get(identifier);
+		if(instance == null)
+			return false;
+
+		// Gibt es Behaviours mit dieser ID?
+		BehaviourBase behaviour = instance.behaviours.get(behaviourName);
+		behaviour.dispose();
+		instance.behaviours.removeKey(behaviourName);
+
+		return true;
 	}
 
 }

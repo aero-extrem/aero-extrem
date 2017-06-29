@@ -5,3 +5,25 @@ sourceCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]
+
+project.ext.mainClassName = "com.aeroextrem.engine.Launcher"
+project.ext.assetsDir = new File("../core/assets")
+
+task run(dependsOn: classes, type: JavaExec) {
+	main = project.mainClassName
+	classpath = sourceSets.main.runtimeClasspath
+	standardInput = System.in
+	workingDir = project.assetsDir
+	ignoreExitValue = true
+	args += "com.aeroextrem.scenario.menu.Menu"
+}
+
+task debug(dependsOn: classes, type: JavaExec) {
+	main = project.mainClassName
+	classpath = sourceSets.main.runtimeClasspath
+	standardInput = System.in
+	workingDir = project.assetsDir
+	ignoreExitValue = true
+	debug = true
+}
+

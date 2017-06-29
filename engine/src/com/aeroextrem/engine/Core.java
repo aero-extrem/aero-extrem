@@ -19,13 +19,13 @@ public class Core implements ApplicationListener {
 	/** Erstellt die Engine
 	 *
 	 * @param firstScenario Erstes Szenario der Engine */
-	public Core(@NotNull ApplicationListener firstScenario) {
+	public Core(@NotNull Scenario firstScenario) {
 		scenario = firstScenario;
 	}
 
 	/** Momentan geladenes Szenario */
 	@Nullable
-	private ApplicationListener scenario = null;
+	private Scenario scenario = null;
 	/** Lädt jetziges Szenario noch? */
 	private boolean isLoading = false;
 
@@ -56,6 +56,7 @@ public class Core implements ApplicationListener {
 
 		assert scenario != null;
 		scenario.create();
+		scenario.load();
 	}
 
 	/** Gibt ein Bild aus. Wird bestenfalls 60 mal in der Sekunde aufgerufen. */
@@ -133,7 +134,7 @@ public class Core implements ApplicationListener {
 	 * Während der Ladezeit wird ein Ladebildschirm angezeigt.
 	 *
 	 * @param listener Neues, uninitialisiertes Szenario */
-	public void setScenario(@Nullable ApplicationListener listener) {
+	public void setScenario(@Nullable Scenario listener) {
 		if(scenario != null)
 			scenario.dispose();
 
@@ -146,8 +147,9 @@ public class Core implements ApplicationListener {
 		isLoading = true;
 		// Lädt das Szenario parallel
 		// Zeigt einen Ladebildschirm während create() läuft
+		scenario.create();
 		asyncExec(() -> {
-			scenario.create();
+			scenario.load();
 			isLoading = false;
 		});
 	}

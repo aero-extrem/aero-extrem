@@ -1,25 +1,33 @@
 package com.aeroextrem.scenario.simulation;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
+import com.aeroextrem.engine.common3d.Common3D;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
 
 /** Platzhalter für die Simulation */
-public class Simulation extends ApplicationAdapter {
+public class Simulation extends Common3D {
+
 
 	@Override
-	public void create() {
-		// Simuliert eine Ladezeit
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			System.err.println("Schlaf unterbrochen :(");
-		}
+	public void load() {
+		super.load();
+
 	}
 
 	@Override
-	public void render() {
-		Gdx.gl.glClearColor(1f, 0f, 0f, 1f);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+	protected void render3D(ModelBatch mb, Environment env) {
+
 	}
+
+	@Override
+	protected void renderUI(SpriteBatch sb) {
+
+	}
+
+	@Override
+	protected void updateCamera() {
+
+	}
+
 }

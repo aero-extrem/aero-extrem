@@ -1,1 +1,1 @@
-include 'desktop', 'core', 'engine'
+include 'core', 'engine'

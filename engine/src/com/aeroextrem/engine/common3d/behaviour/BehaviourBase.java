@@ -5,12 +5,12 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
 /** Basis für jedes Behaviour */
-public interface BehaviourBase {
+public interface BehaviourBase extends Disposable {
 
 	/** Wird beim Erstellen des Behaviours aufgerufen
 	 *
-	 * @param resource Asoziierte Resource
-	 * @param despos Platz für Ressourcen, die explizit freigegeben werden müssen */
-	void onCreate(GameResource resource, Array<Disposable> despos);
+	 * @param resource Asoziierte Resource */
+	void onCreate(GameResource resource);
 
+	@Override default void dispose() {}
 }

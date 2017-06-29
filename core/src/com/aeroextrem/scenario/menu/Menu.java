@@ -1,8 +1,8 @@
 package com.aeroextrem.scenario.menu;
 
 import com.aeroextrem.engine.Core;
+import com.aeroextrem.engine.ScenarioAdapter;
 import com.aeroextrem.scenario.simulation.Simulation;
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -13,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 /** Hauptmenü-Szenario nach dem MVC-Pattern.
  *
  * Dies ist der Controller. */
-public class Menu extends ApplicationAdapter {
+public class Menu extends ScenarioAdapter {
 
 	// Views
 	private Stage stage;
@@ -26,6 +26,10 @@ public class Menu extends ApplicationAdapter {
 	public void create() {
 		// Erstelle Views.
 		stage = new Stage();
+	}
+
+	@Override
+	public void load() {
 		Gdx.input.setInputProcessor(stage);
 		skin = new Skin(Gdx.files.internal("skin/neon-ui.json"));
 
@@ -84,6 +88,11 @@ public class Menu extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+		if(window != null)
+			handleUI();
+	}
+
+	private void handleUI() {
 		stage.act();
 		stage.draw();
 
@@ -95,7 +104,8 @@ public class Menu extends ApplicationAdapter {
 	@Override
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height, true);
-		window.setPosition(window.getX()/2, window.getY()/2);
+		if(window != null)
+			window.setPosition(window.getX()/2, window.getY()/2);
 	}
 
 	/** Schließt das Hauptmenü */
