@@ -28,6 +28,8 @@ public class Core implements ApplicationListener {
 	private Scenario scenario = null;
 	/** Lädt jetziges Szenario noch? */
 	private boolean isLoading = false;
+	/** Ist jetziges Szenario gerade fertig geworden mit Laden? */
+	private boolean changesToApply = false;
 
 	/** Lade-Bildschirm */
 	private ApplicationListener loadingScreen;
@@ -79,6 +81,12 @@ public class Core implements ApplicationListener {
 		 *  - Jegliche Aufrufe, die Buffered I/O ausführen könnten.
 		 *  - Darunter fällt auch ResourceManager.
 		 */
+
+		if(changesToApply) {
+			changesToApply = false;
+			assert scenario != null;
+			scenario.lateLoad();
+		}
 
 		if(scenario != null && !isLoading) {
 			scenario.render();
@@ -147,10 +155,12 @@ public class Core implements ApplicationListener {
 		isLoading = true;
 		// Lädt das Szenario parallel
 		// Zeigt einen Ladebildschirm während create() läuft
+
 		scenario.create();
 		asyncExec(() -> {
 			scenario.load();
 			isLoading = false;
+			changesToApply = true;
 		});
 	}
 

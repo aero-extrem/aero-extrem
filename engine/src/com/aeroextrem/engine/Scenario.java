@@ -4,11 +4,14 @@ import com.badlogic.gdx.ApplicationListener;
 
 public interface Scenario extends ApplicationListener {
 
+	/** Erstellen des Szenarios mit OpenGL Kontext. Wird vor load() aufgerufen. */
+	@Override void create();
+
 	/** Laden von externen Ressourcen. Wird asynchron ausgeführt. */
 	void load();
 
-	/** Erstellen des Szenarios mit OpenGL Kontext. Wird vor load() aufgerufen. */
-	@Override void create();
+	/** Laden von externen Ressourcen. Wird mit OpenGL-Kontext nach load() ausgeführt. */
+	void lateLoad();
 
 	/** Ausgeben eines Frames */
 	@Override void render();

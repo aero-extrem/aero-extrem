@@ -19,7 +19,6 @@ import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.dynamics.*;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Disposable;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,7 +62,16 @@ public abstract class Common3D extends ScenarioAdapter {
 	 *
 	 * @param mb 3D Renderer
 	 * @param env Belichtungsinformationen */
-	protected abstract void render3D(ModelBatch mb, Environment env);
+	protected void render3D(ModelBatch mb, Environment env) {
+		Gdx.gl20.glClearColor(1f, 1f, 1f, 1f);
+		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		for(BehavingInstance bi : instances.values()) {
+			if(bi.instance instanceof ModelInstance) {
+				ModelInstance model = (ModelInstance) bi.instance;
+				mb.render(model, env);
+			}
+		}
+	}
 
 	/** Rendert 2D Overlay
 	 *
@@ -118,9 +126,6 @@ public abstract class Common3D extends ScenarioAdapter {
 		instances = new HashMap<>(10);
 		instanceCount = new HashMap<>(10);
 
-		// Visuell
-		environment = createEnvironment();
-
 		// Behaviours
 		despos = new Array<>();
 		behavioursVisual = new Array<>();
@@ -134,6 +139,12 @@ public abstract class Common3D extends ScenarioAdapter {
 		constraintSolver = new btSequentialImpulseConstraintSolver();
 		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, constraintSolver, collisionConfig);
 		dynamicsWorld.setGravity(new Vector3(0, -10f, 0));
+	}
+
+	@Override
+	public void lateLoad() {
+		// Visuell
+		environment = createEnvironment();
 	}
 
 	/** Rendert einen Frame */
@@ -220,10 +231,19 @@ public abstract class Common3D extends ScenarioAdapter {
 		// Änderungen schreiben
 		instances.put(id, new BehavingInstance<>(physInstance));
 
-		int count = instanceCount.get(res);
+		int count = getInstanceCount(res);
+
 		instanceCount.put(res, count+1);
 
 		return id;
+	}
+
+	public int getInstanceCount(GameResource res) {
+		Integer count = instanceCount.get(res);
+		if(count == null)
+			return 0;
+		else
+			return count;
 	}
 
 	/** Entfernt die Instanz.
@@ -231,7 +251,7 @@ public abstract class Common3D extends ScenarioAdapter {
 	 * @param identifier ID der Instanz */
 	public boolean kill(InstanceIdentifier identifier) {
 		// Gibt es Instanzen des Typs?
-		int count = instanceCount.get(identifier.resource);
+		int count = getInstanceCount(identifier.resource);
 		if(count <= 0)
 			return false;
 

@@ -12,6 +12,9 @@ public interface GameResource extends Disposable {
 	/** Lädt die benötigten Objekte in den Speicher. */
 	void load();
 
+	/** Wird nach load() aufgerufen, mit OpenGL Kontext */
+	default void commit() {}
+
 	/** Gibt ein libgdx 3D-Modell mit den Resourcen aus.
 	 *
 	 * @return Modell */

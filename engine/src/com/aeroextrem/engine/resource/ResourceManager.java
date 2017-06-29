@@ -1,6 +1,5 @@
 package com.aeroextrem.engine.resource;
 
-import com.aeroextrem.engine.resource.GameResource;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.utils.ArrayMap;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +15,7 @@ public class ResourceManager {
 		resources = new ArrayMap<>();
 	}
 
-	/** Lädt eine Resource in den Speicher
+	/** Lädt eine Resource in den Hauptspeicher
 	 *
 	 * @param key Klasse der Resource
 	 *
@@ -40,6 +39,20 @@ public class ResourceManager {
 		// Versuche, die Resource zu laden
 		res.load();
 		resources.put(res.getClass(), res);
+	}
+
+	/** Lädt eine Resource in den Grafikspeicher
+	 *
+	 * @param key Klasse der Resource
+	 */
+	public static void lateLoad(Class<? extends GameResource> key) throws IllegalStateException {
+		GameResource res = get(key);
+
+		// Die Resource kann zu diesem Zeitpunkt nicht null sein
+		assert res != null;
+
+		// Versuche, die Resource zu laden
+		res.commit();
 	}
 
 	/** Entlädt eine Resource

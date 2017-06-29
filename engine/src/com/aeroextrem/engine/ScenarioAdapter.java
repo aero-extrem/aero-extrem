@@ -3,6 +3,9 @@ package com.aeroextrem.engine;
 /** Scenario mit leeren Methoden für Bequemlichkeit */
 public class ScenarioAdapter implements Scenario {
 
+	/** Laden von externen Ressourcen. Wird mit OpenGL-Kontext nach load() ausgeführt. */
+	@Override public void lateLoad() {}
+
 	/** Laden von externen Ressourcen. Wird asynchron ausgeführt. */
 	@Override public void load() {}
 
