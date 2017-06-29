@@ -81,9 +81,9 @@ public abstract class Common3D extends ScenarioAdapter {
 	protected Random rand = new Random();
 
 	// Instance map
-	private HashMap<InstanceIdentifier, BehavingInstance> instances;
+	protected HashMap<InstanceIdentifier, BehavingInstance> instances;
 	// Count of instances of type
-	private HashMap<GameResource, Integer> instanceCount;
+	protected HashMap<GameResource, Integer> instanceCount;
 
 	// Behaviours
 	private Array<BehaviourVisual> behavioursVisual;
@@ -91,16 +91,16 @@ public abstract class Common3D extends ScenarioAdapter {
 	private Array<BehaviourInput> behavioursInput;
 
 	// Anzeige
-	private ModelBatch modelBatch;
-	private SpriteBatch spriteBatch;
-	private Camera cam;
-	private Environment environment;
+	protected ModelBatch modelBatch;
+	protected SpriteBatch spriteBatch;
+	protected Camera cam;
+	protected Environment environment;
 
 	// Physikunterstüzung
 	private btCollisionConfiguration collisionConfig;
 	private btDispatcher dispatcher;
 	private btBroadphaseInterface broadphase;
-	private btDynamicsWorld dynamicsWorld;
+	protected btDynamicsWorld dynamicsWorld;
 	private btConstraintSolver constraintSolver;
 
 	// Disposables
@@ -213,7 +213,7 @@ public abstract class Common3D extends ScenarioAdapter {
 		// Änderungen schreiben
 		instances.put(id, new BehavingInstance<>(modelInstance));
 
-		int count = instanceCount.get(res);
+		int count = getInstanceCount(res);
 		instanceCount.put(res, count+1);
 
 		return id;
