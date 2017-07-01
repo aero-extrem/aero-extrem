@@ -7,14 +7,15 @@ import com.aeroextrem.engine.util.ChaseCameraController;
 import com.aeroextrem.scenario.view.skybox.SkyboxResource;
 import com.aeroextrem.scenario.view.terrain.TerrainResource;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.math.Vector3;
 
 /** Platzhalter für die Simulation */
 public class Simulation extends Common3D {
 
-	ChaseCameraController cameraController;
+	ChaseCameraController chaseCam;
+	BitmapFont debugFont;
 
 	@Override
 	public void load() {
@@ -30,22 +31,26 @@ public class Simulation extends Common3D {
 
 		super.lateLoad();
 
-		InstanceIdentifier terrain = spawn(ResourceManager.get(TerrainResource.class));
+		//InstanceIdentifier terrain = spawn(ResourceManager.get(TerrainResource.class));
 		InstanceIdentifier sky = spawn(ResourceManager.get(SkyboxResource.class));
 
-		Vector3 pos = new Vector3();
-		cameraController = new ChaseCameraController(cam, ((ModelInstance)instances.get(terrain).instance).transform.getTranslation(pos));
-		Gdx.input.setInputProcessor(cameraController);
+		chaseCam = new ChaseCameraController(cam, ((ModelInstance)instances.get(sky).instance).transform);
+		Gdx.input.setInputProcessor(chaseCam);
+
+		debugFont = new BitmapFont();
 	}
 
 	@Override
 	protected void renderUI(SpriteBatch sb) {
-
+		sb.begin();
+		sb.setColor(0f, 0f, 0f, 1f);
+		debugFont.draw(sb, String.format("Theta: %.2f, Phi: %.2f", chaseCam.theta, chaseCam.phi), 20, 20);
+		sb.end();
 	}
 
 	@Override
 	protected void updateCamera() {
-		cameraController.update();
+		chaseCam.update();
 	}
 
 	@Override
