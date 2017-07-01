@@ -30,54 +30,6 @@ import static com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute.AmbientLig
 /** Basis für ein 3D Szenario */
 public abstract class Common3D extends ScenarioAdapter {
 
-	/** Umgebung / Belichtungsinformationen erstellen
-	 *
-	 * @return Environment-Objekt */
-	@NotNull
-	protected Environment createEnvironment() {
-		Environment env = new Environment();
-		env.set(new ColorAttribute(AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
-		env.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
-		return env;
-	}
-
-	/** Neue Kamera erstellen
-	 *
-	 * @return Camera-Objekt */
-	@NotNull
-	protected Camera createCamera() {
-		Camera cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		cam.position.set(3f, 7f, 10f);
-		cam.lookAt(0, 10f, 0);
-		cam.near = 1f;
-		cam.far = 300f;
-		cam.update();
-		return cam;
-	}
-
-	/** Kameraposition ausrechnen */
-	protected abstract void updateCamera();
-
-	/** Rendert 3D Sicht
-	 *
-	 * @param mb 3D Renderer
-	 * @param env Belichtungsinformationen */
-	protected void render3D(ModelBatch mb, Environment env) {
-		Gdx.gl20.glClearColor(1f, 1f, 1f, 1f);
-		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-		for(BehavingInstance bi : instances.values()) {
-			if(bi.instance instanceof ModelInstance) {
-				ModelInstance model = (ModelInstance) bi.instance;
-				mb.render(model, env);
-			}
-		}
-	}
-
-	/** Rendert 2D Overlay
-	 *
-	 * @param sb 2D Renderer */
-	protected abstract void renderUI(SpriteBatch sb);
-
 	protected Random rand = new Random();
 
 	// Instance map
@@ -105,6 +57,12 @@ public abstract class Common3D extends ScenarioAdapter {
 
 	// Disposables
 	private Array<Disposable> despos;
+
+
+	protected float bgColorR = 1f;
+	protected float bgColorG = 1f;
+	protected float bgColorB = 1f;
+	protected float bgColorA = 1f;
 
 	/** Bereitet das Szenario vor */
 	@Override
@@ -151,7 +109,7 @@ public abstract class Common3D extends ScenarioAdapter {
 	@Override
 	public void render() {
 		// Hintergrund
-		Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
+		Gdx.gl.glClearColor(bgColorR, bgColorG, bgColorB, bgColorA);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		updateCamera();
@@ -163,6 +121,59 @@ public abstract class Common3D extends ScenarioAdapter {
 		renderUI(spriteBatch);
 		calcPhysics();
 	}
+
+	@Override
+	public void resize(int width, int height) {
+		cam.viewportWidth = width;
+		cam.viewportHeight = height;
+		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
+	}
+
+	/** Umgebung / Belichtungsinformationen erstellen
+	 *
+	 * @return Environment-Objekt */
+	@NotNull
+	protected Environment createEnvironment() {
+		Environment env = new Environment();
+		env.set(new ColorAttribute(AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+		env.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+		return env;
+	}
+
+	/** Neue Kamera erstellen
+	 *
+	 * @return Camera-Objekt */
+	@NotNull
+	protected Camera createCamera() {
+		Camera cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		cam.position.set(3f, 7f, 10f);
+		cam.lookAt(0, 10f, 0);
+		cam.near = 1f;
+		cam.far = 300f;
+		cam.update();
+		return cam;
+	}
+
+	/** Kameraposition ausrechnen */
+	protected abstract void updateCamera();
+
+	/** Rendert 3D Sicht
+	 *
+	 * @param mb 3D Renderer
+	 * @param env Belichtungsinformationen */
+	protected void render3D(ModelBatch mb, Environment env) {
+		for(BehavingInstance bi : instances.values()) {
+			if(bi.instance instanceof ModelInstance) {
+				ModelInstance model = (ModelInstance) bi.instance;
+				mb.render(model, env);
+			}
+		}
+	}
+
+	/** Rendert 2D Overlay
+	 *
+	 * @param sb 2D Renderer */
+	protected abstract void renderUI(SpriteBatch sb);
 
 	/** Berechnet einen Schritt der Physiksimulation */
 	protected void calcPhysics() {

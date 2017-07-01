@@ -103,7 +103,7 @@ public class Menu extends ScenarioAdapter {
 	/** Ändert die Größe des Fensters */
 	@Override
 	public void resize(int width, int height) {
-		stage.getViewport().update(width, height, true);
+		stage.getViewport().update(width, height, false);
 		if(window != null)
 			window.setPosition(window.getX()/2, window.getY()/2);
 	}
