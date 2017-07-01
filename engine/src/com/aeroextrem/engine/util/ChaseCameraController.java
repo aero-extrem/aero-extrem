@@ -119,13 +119,18 @@ public class ChaseCameraController extends InputAdapter {
 
 	private void handleKeys() {
 		if(keys.containsKey(UP))
-			theta = Math.min(theta - velocity, PI);
-		else if(keys.containsKey(DOWN))
-			theta = Math.max(theta + velocity, 0);
+			theta += velocity;
+		if(keys.containsKey(DOWN))
+			theta -= velocity;
+
+		if(theta < 0)
+			theta = 0;
+		else if(theta > PI)
+			theta = PI;
 
 		if(keys.containsKey(LEFT))
 			phi = (phi + velocity) % (2*PI);
-		else if(keys.containsKey(RIGHT))
+		if(keys.containsKey(RIGHT))
 			phi = (phi - velocity) % (2*PI);
 
 		if(phi < 0)
@@ -152,6 +157,7 @@ public class ChaseCameraController extends InputAdapter {
 		camera.direction.set(unit).scl(-1);
 
 		// Normal (never rolling)
+		// TODO: Fix weird behaviour @ theta=PI/2
 		float upX = MathUtils.sin(theta - PI) * MathUtils.cos(phi);
 		float upY = MathUtils.cos(theta - PI);
 		float upZ = MathUtils.sin(theta - PI) * MathUtils.sin(phi);
