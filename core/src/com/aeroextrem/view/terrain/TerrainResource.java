@@ -1,4 +1,4 @@
-package com.aeroextrem.scenario.view.terrain;
+package com.aeroextrem.view.terrain;
 
 import com.aeroextrem.engine.common3d.resource.PhysicsInfo;
 import com.aeroextrem.engine.common3d.resource.PhysicsResource;

@@ -1,4 +1,4 @@
-package com.aeroextrem.scenario.view.skybox;
+package com.aeroextrem.view.skybox;
 
 import com.aeroextrem.engine.resource.GameResource;
 import com.badlogic.gdx.Gdx;

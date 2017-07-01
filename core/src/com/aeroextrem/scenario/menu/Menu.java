@@ -9,6 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
+import static com.aeroextrem.util.AeroExtrem.skin;
 
 /** Hauptmenü-Szenario nach dem MVC-Pattern.
  *
@@ -17,7 +20,6 @@ public class Menu extends ScenarioAdapter {
 
 	// Views
 	private Stage stage;
-	private Skin skin;
 	private Window window;
 	private TextButton quit, simulation, options;
 
@@ -25,7 +27,7 @@ public class Menu extends ScenarioAdapter {
 	@Override
 	public void create() {
 		// Erstelle Views.
-		stage = new Stage();
+		stage = new Stage(new ScreenViewport());
 	}
 
 	@Override
@@ -111,7 +113,6 @@ public class Menu extends ScenarioAdapter {
 	/** Schließt das Hauptmenü */
 	@Override
 	public void dispose() {
-		skin.dispose();
 		stage.dispose();
 	}
 
