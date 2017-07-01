@@ -24,7 +24,7 @@ Status: [![Build Status](https://travis-ci.org/aero-extrem/aero-extrem.svg?branc
 
 #### Enthält:
 
-* Code vom Aero EXTREM Team (Lizenz noch zu veröffentlichen)
+* Code vom Aero EXTREM Team (GPLv3)
 * __Gradle Wrapper 2.14.1 [gradle.org](https://gradle.org)__
   (`gradle/`, `gradlew`, `gradlew.bat`):
   Gradle Projekte benutzen ohne Gradle-Installation
@@ -46,4 +46,19 @@ Status: [![Build Status](https://travis-ci.org/aero-extrem/aero-extrem.svg?branc
 	 * LibGdx conversion 2014 by Anton Persson
 	 * Released under Apache 2.0
 	 * https://code.google.com/p/animated-gifs-in-android/
+	```
+* Concrete Texture (`core/assets/texture/ground.jpg`)
+	```
+	By Daniel Schwen
+	https://commons.wikimedia.org/wiki/File:Concrete_texture.jpg
+	```
+* Cloudy Light Rays Skybox (`core/assets/texutre/skybox/`)
+	```
+	SkyboxSet by Heiko Irrgang is licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
+	Based on a work at 93i.de.
+	```
+* Code basierend auf EnvironmentCubemap (`engine/src/com.aeroextrem.engine.util.EnvironmentCubemap`)
+	```
+	Written by user Nolesh
+	https://stackoverflow.com/a/22777350/2639234
 	```

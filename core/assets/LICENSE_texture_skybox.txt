@@ -1,0 +1,8 @@
+"SkyboxSet / CloudyLightRays"
+
+By:		Heiko Irrgang
+Link:	https://93i.de/de/p/free-skybox-texture-set/
+Path:	core/assets/texture/skybox/*.jpg
+
+SkyboxSet by Heiko Irrgang is licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
+Based on a work at 93i.de.
