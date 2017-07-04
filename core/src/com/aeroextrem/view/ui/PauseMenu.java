@@ -1,10 +1,6 @@
 package com.aeroextrem.view.ui;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
@@ -53,36 +49,11 @@ public class PauseMenu extends ApplicationAdapter {
 
 	@Override
 	public void dispose() {
-		skin.dispose();
 		stage.dispose();
 	}
 
 	public Stage getStage() {
 		return stage;
-	}
-
-	/** Hintergrund mit Farbe 0x00000080 */
-	private static final class Background extends Actor {
-
-		public float bgColorR, bgColorG, bgColorB, bgColorA;
-
-		private final ShapeRenderer shaper = new ShapeRenderer();
-
-		public Background() {
-			bgColorR = bgColorG = bgColorB = 0f;
-			bgColorA = 0.5f;
-		}
-
-		@Override
-		public void draw(Batch batch, float parentAlpha) {
-			batch.end();
-			Gdx.gl20.glEnable(GL20.GL_BLEND);
-			shaper.begin(ShapeRenderer.ShapeType.Filled);
-			shaper.setColor(bgColorR, bgColorG, bgColorB, bgColorA * parentAlpha);
-			shaper.rect(0, 0, getStage().getWidth(), getStage().getHeight());
-			shaper.end();
-			batch.begin();
-		}
 	}
 
 }
