@@ -8,7 +8,7 @@ import com.aeroextrem.engine.util.EnvironmentCubemap;
 import com.aeroextrem.util.InputSwitch;
 import com.aeroextrem.view.skybox.SkyboxResource;
 import com.aeroextrem.view.terrain.TerrainResource;
-import com.aeroextrem.view.ui.PauseMenu;
+import com.aeroextrem.view.ui.IngameMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -18,22 +18,27 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 
-/** Platzhalter für die Simulation */
+/** Flugsimulation */
 public class Simulation extends Common3D {
 
 	boolean showPauseMenu = false;
 	boolean showDebug = true;
 
-	InputSwitch pauseMenuInput;
-	PauseMenu pauseMenu;
+	// Menu
+	private InputSwitch pauseMenuInput;
+	private IngameMenu menu;
+	private MenuController menuController;
 
+	// Simulation
 	private SimulationInput inputSim;
 	private ChaseCameraController inputCam;
 
-	private BitmapFont debugFont;
+	// Skybox
 	private EnvironmentCubemap skybox;
 	private Pixmap skyPosX, skyNegX, skyPosY, skyNegY, skyPosZ, skyNegZ;
 
+	// UI
+	private BitmapFont debugFont;
 
 	@Override
 	public void load() {
@@ -41,7 +46,8 @@ public class Simulation extends Common3D {
 		ResourceManager.load(TerrainResource.class);
 		ResourceManager.load(SkyboxResource.class);
 
-		pauseMenu = new PauseMenu();
+		menu = new IngameMenu();
+		menuController = new MenuController(menu);
 
 		skyPosX = new Pixmap(Gdx.files.internal("texture/skybox/CloudyLightRaysLeft2048.png"));
 		skyNegX = new Pixmap(Gdx.files.internal("texture/skybox/CloudyLightRaysRight2048.png"));
@@ -57,7 +63,8 @@ public class Simulation extends Common3D {
 		ResourceManager.lateLoad(SkyboxResource.class);
 
 		super.lateLoad();
-		pauseMenu.create();
+		menu.create();
+		menuController.createMenu();
 
 		skybox = new EnvironmentCubemap(skyPosX, skyNegX, skyPosY, skyNegY, skyPosZ, skyNegZ);
 
@@ -65,9 +72,9 @@ public class Simulation extends Common3D {
 		InstanceIdentifier sky = spawn(ResourceManager.get(SkyboxResource.class));
 
 		Gdx.input.setInputProcessor(new InputMultiplexer(
-			pauseMenuInput = new InputSwitch(pauseMenu.getStage()),
+			pauseMenuInput = new InputSwitch(menu.getStage()),
 			inputCam = new ChaseCameraController(cam, ((ModelInstance)instances.get(sky).instance).transform),
-			inputSim = new SimulationInput(this)
+			inputSim = new SimulationInput(this, pauseMenuInput)
 		));
 
 		debugFont = new BitmapFont();
@@ -77,7 +84,7 @@ public class Simulation extends Common3D {
 
 	@Override
 	public void resize(int width, int height) {
-		pauseMenu.resize(width, height);
+		menu.resize(width, height);
 	}
 
 	@Override
@@ -86,7 +93,7 @@ public class Simulation extends Common3D {
 		if(showDebug)
 			renderDebugScreen(sb);
 		if(showPauseMenu)
-			pauseMenu.render();
+			menu.render();
 		sb.end();
 	}
 
@@ -113,7 +120,7 @@ public class Simulation extends Common3D {
 		ResourceManager.unload(TerrainResource.class);
 		ResourceManager.unload(SkyboxResource.class);
 
-		pauseMenu.dispose();
+		menu.dispose();
 		skybox.dispose();
 		skyPosX.dispose();
 		skyNegX.dispose();

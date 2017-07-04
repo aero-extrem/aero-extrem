@@ -1,6 +1,7 @@
 package com.aeroextrem.view.ui;
 
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
@@ -8,12 +9,13 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import static com.aeroextrem.util.AeroExtrem.skin;
 
-public class PauseMenu extends ApplicationAdapter {
+/** Spieleinstellungen */
+public class OptionsMenu extends ApplicationAdapter {
 
 	private Stage stage;
 	private Window window;
 
-	/** Erstellt das Pause-Menü */
+	/** Erstellt das Optionen-Menü */
 	@Override
 	public void create() {
 		stage = new Stage(new ScreenViewport());
@@ -24,8 +26,11 @@ public class PauseMenu extends ApplicationAdapter {
 		window.setKeepWithinStage(false);
 
 		// Title
-		Label title = new Label("Pause", skin);
+		Label title = new Label("Optionen", skin);
 		window.add(title);
+
+		Label placeHolder = new Label("Hier werden später Einstellungen angezeigt", skin);
+		window.add(placeHolder);
 
 		stage.addActor(new Background());
 		stage.addActor(window);
@@ -33,14 +38,12 @@ public class PauseMenu extends ApplicationAdapter {
 		resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
 
-	/** Zeichnet das Pause-Menü */
 	@Override
 	public void render() {
 		stage.act();
 		stage.draw();
 	}
 
-	/** Ändert die Größe des Fensters */
 	@Override
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height, true);
@@ -49,11 +52,11 @@ public class PauseMenu extends ApplicationAdapter {
 
 	@Override
 	public void dispose() {
+		skin.dispose();
 		stage.dispose();
 	}
 
 	public Stage getStage() {
 		return stage;
 	}
-
 }

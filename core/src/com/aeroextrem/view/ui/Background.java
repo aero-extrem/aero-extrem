@@ -22,12 +22,18 @@ public class Background extends Actor {
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
+		// Kontextwechsel SpriteBatch
 		batch.end();
+		// Transparenz
 		Gdx.gl20.glEnable(GL_BLEND);
+
+		// Form zeichnen
 		shaper.begin(Filled);
-		shaper.setColor(colorR, colorG, colorB, colorA * parentAlpha);
-		shaper.rect(0, 0, getStage().getWidth(), getStage().getHeight());
+			shaper.setColor(colorR, colorG, colorB, colorA * parentAlpha);
+			shaper.rect(0, 0, getStage().getWidth(), getStage().getHeight());
 		shaper.end();
+
+		// Änderungen rückgängig machen
 		Gdx.gl20.glDisable(GL_BLEND);
 		batch.begin();
 	}
