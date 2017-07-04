@@ -84,6 +84,7 @@ public class Simulation extends Common3D {
 
 	@Override
 	public void resize(int width, int height) {
+		super.resize(width, height);
 		menu.resize(width, height);
 	}
 
