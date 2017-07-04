@@ -1,4 +1,4 @@
-package com.aeroextrem.scenario.simulation;
+package com.aeroextrem.view.ui;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
@@ -12,9 +12,9 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import static com.aeroextrem.util.AeroExtrem.skin;
 
-class SimulationPauseMenu extends ApplicationAdapter {
+public class PauseMenu extends ApplicationAdapter {
 
-	Stage stage;
+	private Stage stage;
 	private Window window;
 
 	/** Erstellt das Pause-Menü */
@@ -55,6 +55,10 @@ class SimulationPauseMenu extends ApplicationAdapter {
 	public void dispose() {
 		skin.dispose();
 		stage.dispose();
+	}
+
+	public Stage getStage() {
+		return stage;
 	}
 
 	/** Hintergrund mit Farbe 0x00000080 */

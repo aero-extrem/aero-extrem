@@ -8,6 +8,7 @@ import com.aeroextrem.engine.util.EnvironmentCubemap;
 import com.aeroextrem.util.InputSwitch;
 import com.aeroextrem.view.skybox.SkyboxResource;
 import com.aeroextrem.view.terrain.TerrainResource;
+import com.aeroextrem.view.ui.PauseMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -24,7 +25,7 @@ public class Simulation extends Common3D {
 	boolean showDebug = true;
 
 	InputSwitch pauseMenuInput;
-	SimulationPauseMenu pauseMenu;
+	PauseMenu pauseMenu;
 
 	private SimulationInput inputSim;
 	private ChaseCameraController inputCam;
@@ -40,7 +41,7 @@ public class Simulation extends Common3D {
 		ResourceManager.load(TerrainResource.class);
 		ResourceManager.load(SkyboxResource.class);
 
-		pauseMenu = new SimulationPauseMenu();
+		pauseMenu = new PauseMenu();
 
 		skyPosX = new Pixmap(Gdx.files.internal("texture/skybox/CloudyLightRaysLeft2048.png"));
 		skyNegX = new Pixmap(Gdx.files.internal("texture/skybox/CloudyLightRaysRight2048.png"));
@@ -64,7 +65,7 @@ public class Simulation extends Common3D {
 		InstanceIdentifier sky = spawn(ResourceManager.get(SkyboxResource.class));
 
 		Gdx.input.setInputProcessor(new InputMultiplexer(
-			pauseMenuInput = new InputSwitch(pauseMenu.stage),
+			pauseMenuInput = new InputSwitch(pauseMenu.getStage()),
 			inputCam = new ChaseCameraController(cam, ((ModelInstance)instances.get(sky).instance).transform),
 			inputSim = new SimulationInput(this)
 		));
