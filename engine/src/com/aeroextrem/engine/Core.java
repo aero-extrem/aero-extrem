@@ -88,6 +88,7 @@ public class Core implements ApplicationListener {
 			changesToApply = false;
 			assert scenario != null;
 			scenario.lateLoad();
+			scenario.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		}
 
 		if(scenario != null && !isLoading) {
@@ -101,7 +102,7 @@ public class Core implements ApplicationListener {
 	/** Falls die Fenstergröße verändert wird. */
 	@Override
 	public void resize(int width, int height) {
-		if(scenario != null)
+		if(scenario != null && !isLoading)
 			scenario.resize(width, height);
 		loadingScreen.resize(width, height);
 	}
@@ -109,14 +110,14 @@ public class Core implements ApplicationListener {
 	/** Pausiert die Anzeige des Szenarios. */
 	@Override
 	public void pause() {
-		if(scenario != null)
+		if(scenario != null && !isLoading)
 			scenario.pause();
 	}
 
 	/** Fährt die Anzeige des Szenarios fort. */
 	@Override
 	public void resume() {
-		if(scenario != null)
+		if(scenario != null && !isLoading)
 			scenario.resume();
 	}
 
