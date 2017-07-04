@@ -59,6 +59,8 @@ public class Core implements ApplicationListener {
 		assert scenario != null;
 		scenario.create();
 		scenario.load();
+
+		System.out.printf("Gestartet mit Szenario %s\n", scenario);
 	}
 
 	/** Gibt ein Bild aus. Wird bestenfalls 60 mal in der Sekunde aufgerufen. */
@@ -161,6 +163,8 @@ public class Core implements ApplicationListener {
 			scenario.load();
 			isLoading = false;
 			changesToApply = true;
+
+			System.out.printf("Szenario geladen: %s\n", scenario);
 		});
 	}
 
