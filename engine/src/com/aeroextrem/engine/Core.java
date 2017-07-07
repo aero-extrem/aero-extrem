@@ -102,7 +102,7 @@ public class Core implements ApplicationListener {
 	/** Falls die Fenstergröße verändert wird. */
 	@Override
 	public void resize(int width, int height) {
-		if(scenario != null && !isLoading)
+		if(scenario != null && !isLoading && !changesToApply)
 			scenario.resize(width, height);
 		loadingScreen.resize(width, height);
 	}
@@ -110,14 +110,14 @@ public class Core implements ApplicationListener {
 	/** Pausiert die Anzeige des Szenarios. */
 	@Override
 	public void pause() {
-		if(scenario != null && !isLoading)
+		if(scenario != null && !isLoading && !changesToApply)
 			scenario.pause();
 	}
 
 	/** Fährt die Anzeige des Szenarios fort. */
 	@Override
 	public void resume() {
-		if(scenario != null && !isLoading)
+		if(scenario != null && !isLoading && !changesToApply)
 			scenario.resume();
 	}
 
