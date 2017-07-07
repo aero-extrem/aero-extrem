@@ -13,6 +13,7 @@ import static com.badlogic.gdx.Input.Keys.UP;
 import static com.badlogic.gdx.Input.Keys.DOWN;
 import static com.badlogic.gdx.Input.Keys.LEFT;
 import static com.badlogic.gdx.Input.Keys.RIGHT;
+import static com.badlogic.gdx.math.MathUtils.FLOAT_ROUNDING_ERROR;
 import static com.badlogic.gdx.math.MathUtils.PI;
 
 /*
@@ -126,7 +127,7 @@ public class ChaseCameraController extends InputAdapter {
 		if(theta < 0)
 			theta = 0;
 		else if(theta > PI)
-			theta = PI;
+			theta = PI - FLOAT_ROUNDING_ERROR;
 
 		if(keys.containsKey(LEFT))
 			phi = (phi + velocity) % (2*PI);
@@ -157,14 +158,13 @@ public class ChaseCameraController extends InputAdapter {
 		camera.direction.set(unit).scl(-1);
 
 		// Normal (never rolling)
-		// TODO: Fix weird behaviour @ theta=PI/2
-		float upX = MathUtils.sin(theta - PI) * MathUtils.cos(phi);
-		float upY = MathUtils.cos(theta - PI);
-		float upZ = MathUtils.sin(theta - PI) * MathUtils.sin(phi);
+		float upX = MathUtils.sin(theta - (PI/2)) * MathUtils.cos(phi);
+		float upY = MathUtils.cos(theta - (PI/2));
+		float upZ = MathUtils.sin(theta - (PI/2)) * MathUtils.sin(phi);
 
 		camera.up.set(upX, upY, upZ).mul(chasedRot);
 
-		camera.update(true);
+		camera.update(false);
 	}
 
 }
