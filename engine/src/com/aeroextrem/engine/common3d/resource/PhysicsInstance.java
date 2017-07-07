@@ -13,8 +13,10 @@ import com.badlogic.gdx.utils.Disposable;
 /** Instanz eines Modells mit physikalischen Eigenschaften */
 public class PhysicsInstance extends ModelInstance implements Disposable {
 
-	private final ArrayMap<String, PhysicsPartInstance> partMap;
-	private final btDynamicsWorld world;
+	public final ArrayMap<String, PhysicsPartInstance> partMap;
+
+	/** Hiermit sollten nur Constraints erstellt werden. */
+	public final btDynamicsWorld world;
 
 	private static final Vector3 localInertia = new Vector3();
 	public PhysicsInstance(PhysicsResource res, btDynamicsWorld world) {
