@@ -19,10 +19,12 @@ import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.dynamics.*;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Disposable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import static com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute.AmbientLight;
@@ -280,20 +282,23 @@ public abstract class Common3D extends ScenarioAdapter {
 		return true;
 	}
 
-	/** Weist einer Instanz ein Behaviour zu. */
-	public boolean addBehaviour(InstanceIdentifier identifier, String behaviourName, BehaviourBase behaviour) {
+	/** Versucht, ein Behaviour hinzuzufügen
+	 *
+	 * Fügt kein Behaviour hinzu, falls bereits eins vorhanden ist.
+	 *
+	 * @param key Instanz
+	 * @param name Name des Behaviours
+	 * @param behaviour Behaviour
+	 * @return Erfolgreich? */
+	public <T extends ModelInstance> boolean addBehaviour(InstanceIdentifier key, String name, BehaviourBase behaviour) {
 		// Gibt es Instanzen mit dieser ID?
-		BehavingInstance instance = instances.get(identifier);
+		BehavingInstance<T> instance = get(key);
 		if(instance == null)
 			return false;
 
-		behaviour.onCreate(identifier.resource);
+		behaviour.onCreate(key.resource);
 		// FIXME Hässlicher Code
 		if(behaviour instanceof BehaviourVisual) {
-			if(!(instance.instance instanceof ModelInstance)) {
-				System.err.println("Engine: Tried to apply a visual behaviour on a non-visual instance!");
-				return false;
-			}
 			((BehaviourVisual) behaviour).onCreateVisuals(((ModelInstance) instance.instance));
 			behavioursVisual.add((BehaviourVisual) behaviour);
 		}
@@ -306,23 +311,38 @@ public abstract class Common3D extends ScenarioAdapter {
 			behavioursPhysics.add((BehaviourPhysics) behaviour);
 		}
 
-		instance.behaviours.put(behaviourName, behaviour);
+		instance.behaviours.put(name, behaviour);
 		return true;
 	}
 
-	/** Entfernt ein Behaviour von einer Instanz. */
-	public boolean removeBehaviour(InstanceIdentifier identifier, String behaviourName) {
+	/** Versucht, ein Behaviour zu entfernen
+	 *
+	 * @param key Instanz
+	 * @param name Name des Behaviours
+	 * @return true falls entfernt, false falls nicht gefunden */
+	public <T extends ModelInstance> boolean removeBehaviour(InstanceIdentifier key, String name) {
 		// Gibt es Instanzen mit dieser ID?
-		BehavingInstance<Object> instance = instances.get(identifier);
+		BehavingInstance<T> instance = get(key);
 		if(instance == null)
 			return false;
 
 		// Gibt es Behaviours mit dieser ID?
-		BehaviourBase behaviour = instance.behaviours.get(behaviourName);
+		BehaviourBase behaviour = instance.behaviours.get(name);
 		behaviour.dispose();
-		instance.behaviours.removeKey(behaviourName);
+		instance.behaviours.removeKey(name);
 
 		return true;
+	}
+
+
+	/** Versucht, die zugehörige Instanz zu finden */
+	public <T extends ModelInstance> T getInstance(InstanceIdentifier key) {
+		return (T) instances.get(key).instance;
+	}
+
+	/** Versucht, die zugehörige BehavingInstance zu finden */
+	public <T extends ModelInstance> BehavingInstance<T> get(InstanceIdentifier key) {
+		return (BehavingInstance<T>) instances.get(key);
 	}
 
 }
