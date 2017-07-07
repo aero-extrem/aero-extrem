@@ -2,10 +2,12 @@ package com.aeroextrem.scenario.simulation;
 
 import com.aeroextrem.engine.common3d.Common3D;
 import com.aeroextrem.engine.common3d.resource.InstanceIdentifier;
+import com.aeroextrem.engine.common3d.resource.PhysicsInstance;
 import com.aeroextrem.engine.resource.ResourceManager;
 import com.aeroextrem.engine.util.ChaseCameraController;
 import com.aeroextrem.engine.util.EnvironmentCubemap;
 import com.aeroextrem.util.InputSwitch;
+import com.aeroextrem.view.airplane.test.TestPlanePhysics;
 import com.aeroextrem.view.airplane.test.TestPlaneResource;
 import com.aeroextrem.view.terrain.TerrainResource;
 import com.aeroextrem.view.ui.IngameMenu;
@@ -16,7 +18,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 
 /** Flugsimulation */
 public class Simulation extends Common3D {
@@ -68,14 +71,18 @@ public class Simulation extends Common3D {
 
 		skybox = new EnvironmentCubemap(skyPosX, skyNegX, skyPosY, skyNegY, skyPosZ, skyNegZ);
 
-		//InstanceIdentifier terrain = spawn(ResourceManager.get(TerrainResource.class));
+		InstanceIdentifier terrainKey = spawn(ResourceManager.get(TerrainResource.class));
+		PhysicsInstance terrain = getInstance(terrainKey);
+		terrain.partMap.get(TerrainResource.PART_GROUND).rb.translate(new Vector3(0, -50f, 0));
 
-		InstanceIdentifier plane = spawn(ResourceManager.get(TestPlaneResource.class));
-
+		InstanceIdentifier planeKey = spawn(ResourceManager.get(TestPlaneResource.class));
+		PhysicsInstance plane = getInstance(planeKey);
+		Matrix4 planePos = plane.getNode(TestPlaneResource.NODE_FUSELAGE).globalTransform;
+		addBehaviour(planeKey, "Physics", new TestPlanePhysics());
 
 		Gdx.input.setInputProcessor(new InputMultiplexer(
 			pauseMenuInput = new InputSwitch(menu.getStage()),
-			inputCam = new ChaseCameraController(cam, ((ModelInstance)instances.get(plane).instance).transform),
+			inputCam = new ChaseCameraController(cam, planePos),
 			inputSim = new SimulationInput(this, pauseMenuInput)
 		));
 

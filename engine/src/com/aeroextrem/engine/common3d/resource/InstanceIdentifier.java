@@ -24,4 +24,5 @@ public class InstanceIdentifier {
 	public int hashCode() {
 		return resource.hashCode() + 19 * index;
 	}
+
 }
