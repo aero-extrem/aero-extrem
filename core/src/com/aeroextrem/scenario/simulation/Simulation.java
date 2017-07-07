@@ -6,7 +6,7 @@ import com.aeroextrem.engine.resource.ResourceManager;
 import com.aeroextrem.engine.util.ChaseCameraController;
 import com.aeroextrem.engine.util.EnvironmentCubemap;
 import com.aeroextrem.util.InputSwitch;
-import com.aeroextrem.view.skybox.SkyboxResource;
+import com.aeroextrem.view.airplane.test.TestPlaneResource;
 import com.aeroextrem.view.terrain.TerrainResource;
 import com.aeroextrem.view.ui.IngameMenu;
 import com.badlogic.gdx.Gdx;
@@ -44,7 +44,7 @@ public class Simulation extends Common3D {
 	public void load() {
 		super.load();
 		ResourceManager.load(TerrainResource.class);
-		ResourceManager.load(SkyboxResource.class);
+		ResourceManager.load(TestPlaneResource.class);
 
 		menu = new IngameMenu();
 		menuController = new MenuController(menu);
@@ -60,7 +60,7 @@ public class Simulation extends Common3D {
 	@Override
 	public void lateLoad() {
 		ResourceManager.lateLoad(TerrainResource.class);
-		ResourceManager.lateLoad(SkyboxResource.class);
+		ResourceManager.lateLoad(TestPlaneResource.class);
 
 		super.lateLoad();
 		menu.create();
@@ -69,11 +69,13 @@ public class Simulation extends Common3D {
 		skybox = new EnvironmentCubemap(skyPosX, skyNegX, skyPosY, skyNegY, skyPosZ, skyNegZ);
 
 		//InstanceIdentifier terrain = spawn(ResourceManager.get(TerrainResource.class));
-		InstanceIdentifier sky = spawn(ResourceManager.get(SkyboxResource.class));
+
+		InstanceIdentifier plane = spawn(ResourceManager.get(TestPlaneResource.class));
+
 
 		Gdx.input.setInputProcessor(new InputMultiplexer(
 			pauseMenuInput = new InputSwitch(menu.getStage()),
-			inputCam = new ChaseCameraController(cam, ((ModelInstance)instances.get(sky).instance).transform),
+			inputCam = new ChaseCameraController(cam, ((ModelInstance)instances.get(plane).instance).transform),
 			inputSim = new SimulationInput(this, pauseMenuInput)
 		));
 
@@ -103,6 +105,8 @@ public class Simulation extends Common3D {
 	 * @param sb SpriteBatch, nach begin() */
 	private void renderDebugScreen(SpriteBatch sb) {
 		debugFont.draw(sb, String.format("[ORANGE]Camera:[] Theta: %.2f, Phi: %.2f", inputCam.theta, inputCam.phi), 20, 20);
+		debugFont.draw(sb, String.format("[ORANGE]Cam Up:[] [[%.2f, %.2f, %.2f]]", cam.up.x, cam.up.y, cam.up.z), 20, 40);
+		debugFont.draw(sb, String.format("[ORANGE]Cam Dir:[] [[%.2f, %.2f, %.2f]]", cam.direction.x, cam.direction.y, cam.direction.z), 20, 60);
 	}
 
 	@Override
@@ -119,7 +123,7 @@ public class Simulation extends Common3D {
 	@Override
 	public void dispose() {
 		ResourceManager.unload(TerrainResource.class);
-		ResourceManager.unload(SkyboxResource.class);
+		ResourceManager.unload(TestPlaneResource.class);
 
 		menu.dispose();
 		skybox.dispose();
