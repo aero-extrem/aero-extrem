@@ -25,4 +25,8 @@ public class InstanceIdentifier {
 		return resource.hashCode() + 19 * index;
 	}
 
+	@Override
+	public String toString() {
+		return resource.getClass().getName() + index;
+	}
 }

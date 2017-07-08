@@ -12,7 +12,6 @@ import com.aeroextrem.view.airplane.test.TestPlaneResource;
 import com.aeroextrem.view.terrain.TerrainResource;
 import com.aeroextrem.view.ui.IngameMenu;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -23,6 +22,10 @@ import com.badlogic.gdx.math.Vector3;
 
 /** Flugsimulation */
 public class Simulation extends Common3D {
+
+	protected static final String INPUT_PAUSE = "pauseSwitch";
+	protected static final String INPUT_CHASE_CAM = "camController";
+	protected static final String INPUT_SIM = "scenario";
 
 	boolean showPauseMenu = false;
 	boolean showDebug = true;
@@ -80,11 +83,9 @@ public class Simulation extends Common3D {
 		Matrix4 planePos = plane.getNode(TestPlaneResource.NODE_FUSELAGE).globalTransform;
 		addBehaviour(planeKey, "Physics", new TestPlanePhysics());
 
-		Gdx.input.setInputProcessor(new InputMultiplexer(
-			pauseMenuInput = new InputSwitch(menu.getStage()),
-			inputCam = new ChaseCameraController(cam, planePos),
-			inputSim = new SimulationInput(this, pauseMenuInput)
-		));
+		inputProcessor.putProcessor(INPUT_PAUSE,		pauseMenuInput = new InputSwitch(menu.getStage()));
+		inputProcessor.putProcessor(INPUT_CHASE_CAM,	inputCam = new ChaseCameraController(cam, planePos));
+		inputProcessor.putProcessor(INPUT_SIM,		inputSim = new SimulationInput(this, pauseMenuInput));
 
 		debugFont = new BitmapFont();
 		debugFont.setColor(0f, 0f, 0f, 1f);

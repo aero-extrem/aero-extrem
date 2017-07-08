@@ -15,7 +15,7 @@ task run(dependsOn: classes, type: JavaExec) {
 	standardInput = System.in
 	workingDir = project.assetsDir
 	ignoreExitValue = true
-	args += "com.aeroextrem.scenario.menu.Menu"
+	args += "com.aeroextrem.scenario.splash.SplashScreen"
 }
 
 task debug(dependsOn: classes, type: JavaExec) {

@@ -4,7 +4,9 @@ import com.aeroextrem.engine.ScenarioAdapter;
 import com.aeroextrem.engine.common3d.behaviour.*;
 import com.aeroextrem.engine.common3d.resource.*;
 import com.aeroextrem.engine.resource.GameResource;
+import com.aeroextrem.engine.util.InputMappedMultiplexer;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -19,12 +21,10 @@ import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.dynamics.*;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Disposable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import static com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute.AmbientLight;
@@ -39,10 +39,14 @@ public abstract class Common3D extends ScenarioAdapter {
 	// Count of instances of type
 	protected HashMap<GameResource, Integer> instanceCount;
 
+	// Input
+	protected InputMappedMultiplexer inputProcessor;
+
 	// Behaviours
 	private Array<BehaviourVisual> behavioursVisual;
 	private Array<BehaviourPhysics> behavioursPhysics;
-	private Array<BehaviourInput> behavioursInput;
+	private InputMappedMultiplexer behavioursInput;
+	protected static final String INPUT_BEHAVIOURS = "behaviours";
 
 	// Anzeige
 	protected ModelBatch modelBatch;
@@ -86,11 +90,15 @@ public abstract class Common3D extends ScenarioAdapter {
 		instances = new HashMap<>(10);
 		instanceCount = new HashMap<>(10);
 
+		// Input
+		inputProcessor = new InputMappedMultiplexer();
+
 		// Behaviours
 		despos = new Array<>();
 		behavioursVisual = new Array<>();
 		behavioursPhysics = new Array<>();
-		behavioursInput = new Array<>();
+		behavioursInput = new InputMappedMultiplexer();
+		inputProcessor.putProcessor(INPUT_BEHAVIOURS, behavioursInput);
 
 		// Physik
 		collisionConfig = new btDefaultCollisionConfiguration();
@@ -105,6 +113,8 @@ public abstract class Common3D extends ScenarioAdapter {
 	public void lateLoad() {
 		// Visuell
 		environment = createEnvironment();
+
+		Gdx.input.setInputProcessor(inputProcessor);
 	}
 
 	/** Rendert einen Frame */
@@ -299,7 +309,7 @@ public abstract class Common3D extends ScenarioAdapter {
 		behaviour.onCreate(key.resource);
 		// FIXME Hässlicher Code
 		if(behaviour instanceof BehaviourVisual) {
-			((BehaviourVisual) behaviour).onCreateVisuals(((ModelInstance) instance.instance));
+			((BehaviourVisual) behaviour).onCreateVisuals(instance.instance);
 			behavioursVisual.add((BehaviourVisual) behaviour);
 		}
 		if(behaviour instanceof BehaviourPhysics) {
@@ -309,6 +319,10 @@ public abstract class Common3D extends ScenarioAdapter {
 			}
 			((BehaviourPhysics) behaviour).onBindPhysics(dynamicsWorld, (PhysicsInstance) instance.instance);
 			behavioursPhysics.add((BehaviourPhysics) behaviour);
+		}
+		if(behaviour instanceof BehaviourInput) {
+			InputProcessor processor = ((BehaviourInput) behaviour).onBindInput();
+			behavioursInput.putProcessor(key.toString(), processor);
 		}
 
 		instance.behaviours.put(name, behaviour);
