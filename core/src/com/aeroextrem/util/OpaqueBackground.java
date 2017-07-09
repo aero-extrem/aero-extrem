@@ -3,6 +3,7 @@ package com.aeroextrem.util;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import org.jetbrains.annotations.NotNull;
 
 import static com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Filled;
 
@@ -24,7 +25,7 @@ public class OpaqueBackground extends Actor {
 	}
 
 	@Override
-	public void draw(Batch batch, float parentAlpha) {
+	public void draw(@NotNull Batch batch, float parentAlpha) {
 		// Form zeichnen
 		shaper.begin(Filled);
 		shaper.setColor(colorR, colorG, colorB, 1f);

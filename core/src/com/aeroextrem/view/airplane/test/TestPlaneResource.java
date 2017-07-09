@@ -52,12 +52,14 @@ public class TestPlaneResource implements PhysicsResource {
 	}
 	
 	@Override
-	@NotNull public Model getModel() {
+	@NotNull
+	public Model getModel() {
 		return model;
 	}
 	
 	@Override
-	@NotNull public ArrayMap<String, PhysicsInfo> getPhysicsNodes() {
+	@NotNull
+	public ArrayMap<String, PhysicsInfo> getPhysicsNodes() {
 		return physicsNodes;
 	}
 

@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 public class SplashScreen extends ScenarioAdapter {
 
 	private Stage stage;
-	private Group root;
 	private Group scrTitle, scrTeam, scrEngine;
 
 	private Background overlay;
@@ -24,7 +23,6 @@ public class SplashScreen extends ScenarioAdapter {
 	@Override
 	public void create() {
 		this.stage = new Stage();
-		this.root = new Group();
 
 		this.scrTitle = new Group();
 		scrTitle.addActor(new OpaqueBackground(1f, 0f, 0f));
@@ -33,11 +31,10 @@ public class SplashScreen extends ScenarioAdapter {
 		this.scrEngine = new Group();
 		scrEngine.addActor(new OpaqueBackground(0f, 0f, 1f));
 
-		root.addActor(scrTitle);
-		root.addActor(scrTeam);
-		root.addActor(scrEngine);
+		stage.addActor(scrTitle);
+		stage.addActor(scrTeam);
+		stage.addActor(scrEngine);
 
-		stage.addActor(root);
 		stage.addActor(overlay = new Background(0f, 0f, 0f, 1f));
 
 		setScreen(SCREEN_TITLE);

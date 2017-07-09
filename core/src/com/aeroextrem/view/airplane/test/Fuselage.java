@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.SphereShapeBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCapsuleShapeX;
+import org.jetbrains.annotations.NotNull;
 
 import static com.aeroextrem.view.airplane.test.TestPlaneMaterials.*;
 
@@ -22,8 +23,9 @@ public class Fuselage implements PartVisual, PartPhysics {
 	private static final String PART_NAME_2 = "back";
 	private static final String PART_NAME_3 = "front";
 	private static final float MASS = 50f;
-	
+
 	@Override
+	@NotNull
 	public PhysicsInfo loadPhysicsPart() {
 		return new PhysicsInfo(
 			new btCapsuleShapeX(1f, 4.5f),
@@ -33,7 +35,7 @@ public class Fuselage implements PartVisual, PartPhysics {
 	}
 
 	@Override
-	public void loadNode(ModelBuilder mb, Node node) {
+	public void loadNode(@NotNull ModelBuilder mb, @NotNull Node node) {
 		MeshPartBuilder mpb;
 
 		// Plane Tank

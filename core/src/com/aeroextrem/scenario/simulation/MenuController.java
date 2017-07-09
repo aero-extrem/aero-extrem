@@ -4,6 +4,7 @@ import com.aeroextrem.view.ui.IngameMenu;
 import com.aeroextrem.view.ui.OptionsWindow;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import org.jetbrains.annotations.NotNull;
 
 /** Erstellt ein Pause-Menü für die Simulation */
 class MenuController {
@@ -13,7 +14,7 @@ class MenuController {
 
 	private IngameMenu menu;
 
-	MenuController(IngameMenu menu) {
+	MenuController(@NotNull IngameMenu menu) {
 		this.menu = menu;
 	}
 
@@ -37,7 +38,7 @@ class MenuController {
 	private final class WindowSwitchClickListener extends ClickListener {
 		private final String targetWindow;
 
-		public WindowSwitchClickListener(String targetWindow) {
+		public WindowSwitchClickListener(@NotNull String targetWindow) {
 			this.targetWindow = targetWindow;
 		}
 

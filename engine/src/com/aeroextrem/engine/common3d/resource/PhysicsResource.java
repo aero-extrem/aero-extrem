@@ -18,7 +18,8 @@ public interface PhysicsResource extends GameResource {
 	@Override void load();
 
 	/** Gibt ein libgdx 3D-Modell mit den Resourcen aus. */
-	@Override @NotNull Model getModel();
+	@Override
+	@NotNull Model getModel();
 
 	/** Gibt den Speicher der Resource wieder frei. */
 	@Override void dispose();

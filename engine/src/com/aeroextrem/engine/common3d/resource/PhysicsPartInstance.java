@@ -5,11 +5,16 @@ import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Disposable;
+import org.jetbrains.annotations.NotNull;
 
 /** Instanz einer physikalischen Komponente */
 public class PhysicsPartInstance implements Disposable {
 
-	public PhysicsPartInstance(btRigidBody.btRigidBodyConstructionInfo rbci, MotionState ms, btRigidBody rb) {
+	public PhysicsPartInstance(
+			@NotNull btRigidBody.btRigidBodyConstructionInfo rbci,
+			@NotNull MotionState ms,
+			@NotNull btRigidBody rb
+	) {
 		this.rbci = rbci;
 		this.ms = ms;
 		this.rb = rb;
@@ -26,7 +31,7 @@ public class PhysicsPartInstance implements Disposable {
 	 *
 	 * @param model ModelInstance, die verschoben werden soll.
 	 * @param translation Vektor, um den verschoben wird.*/
-	public static void moveObject(ModelInstance model, Vector3 translation) {
+	public static void moveObject(@NotNull ModelInstance model, @NotNull Vector3 translation) {
 		for (Node node : model.nodes) {
 			node.globalTransform.translate(translation);
 		}

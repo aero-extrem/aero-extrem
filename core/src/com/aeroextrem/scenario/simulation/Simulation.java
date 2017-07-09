@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import org.jetbrains.annotations.NotNull;
 
 /** Flugsimulation */
 public class Simulation extends Common3D {
@@ -76,10 +77,12 @@ public class Simulation extends Common3D {
 
 		InstanceIdentifier terrainKey = spawn(ResourceManager.get(TerrainResource.class));
 		PhysicsInstance terrain = getInstance(terrainKey);
+		assert terrain != null;
 		terrain.partMap.get(TerrainResource.PART_GROUND).rb.translate(new Vector3(0, -50f, 0));
 
 		InstanceIdentifier planeKey = spawn(ResourceManager.get(TestPlaneResource.class));
 		PhysicsInstance plane = getInstance(planeKey);
+		assert plane != null;
 		Matrix4 planePos = plane.getNode(TestPlaneResource.NODE_FUSELAGE).globalTransform;
 		addBehaviour(planeKey, "Physics", new TestPlanePhysics());
 
@@ -99,7 +102,7 @@ public class Simulation extends Common3D {
 	}
 
 	@Override
-	protected void renderUI(SpriteBatch sb) {
+	protected void renderUI(@NotNull SpriteBatch sb) {
 		sb.begin();
 		if(showDebug)
 			renderDebugScreen(sb);
@@ -118,7 +121,7 @@ public class Simulation extends Common3D {
 	}
 
 	@Override
-	protected void render3D(ModelBatch mb, Environment env) {
+	protected void render3D(@NotNull ModelBatch mb, @NotNull Environment env) {
 		skybox.render(cam);
 		super.render3D(mb, env);
 	}

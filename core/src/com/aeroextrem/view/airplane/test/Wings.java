@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
+import org.jetbrains.annotations.NotNull;
 
 import static com.aeroextrem.view.airplane.test.TestPlaneMaterials.*;
 
@@ -21,6 +22,7 @@ class Wings implements PartVisual, PartPhysics {
 	private static final String PART_NAME = "wings";
 	private static final float MASS = 10f;
 
+	@NotNull
 	@Override
 	public PhysicsInfo loadPhysicsPart() {
 		btCompoundShape wings = new btCompoundShape(false);
@@ -33,7 +35,7 @@ class Wings implements PartVisual, PartPhysics {
 	}
 
 	@Override
-	public void loadNode(ModelBuilder mb, Node node) {
+	public void loadNode(@NotNull ModelBuilder mb, @NotNull Node node) {
 		MeshPartBuilder mpb;
 
 		mpb = mb.part(PART_NAME, GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, PLANE_STATIC);

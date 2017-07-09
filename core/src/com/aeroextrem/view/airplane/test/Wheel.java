@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.CylinderShapeBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCylinderShapeZ;
+import org.jetbrains.annotations.NotNull;
 
 import static com.aeroextrem.view.airplane.test.TestPlaneMaterials.*;
 
@@ -22,6 +23,7 @@ class Wheel implements PartVisual, PartPhysics {
 	private static final float LENGTH = 0.3f;
 
 	@Override
+	@NotNull
 	public PhysicsInfo loadPhysicsPart() {
 		return new PhysicsInfo(
 			new btCylinderShapeZ(new Vector3(RADIUS, RADIUS, LENGTH)),
@@ -31,7 +33,7 @@ class Wheel implements PartVisual, PartPhysics {
 	}
 
 	@Override
-	public void loadNode(ModelBuilder mb, Node node) {
+	public void loadNode(@NotNull ModelBuilder mb, @NotNull Node node) {
 		MeshPartBuilder mpb;
 
 		mpb = mb.part(PART_NAME, GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, PLANE_DYNAMIC);

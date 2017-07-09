@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import org.jetbrains.annotations.NotNull;
 
 public class IngameMenu extends ApplicationAdapter {
 
@@ -39,7 +40,7 @@ public class IngameMenu extends ApplicationAdapter {
 	/** Setzt die Sichtbarkeit eines Fensters
 	 *
 	 * @param targetWindowID ID des Fensters */
-	public void setVisibleWindow(String targetWindowID) {
+	public void setVisibleWindow(@NotNull String targetWindowID) {
 		for(ObjectMap.Entry<String, Window> entry : windows.entries()) {
 			String windowID = entry.key;
 			Window window = entry.value;
@@ -75,6 +76,7 @@ public class IngameMenu extends ApplicationAdapter {
 		stage.dispose();
 	}
 
+	@NotNull
 	public Stage getStage() {
 		return stage;
 	}

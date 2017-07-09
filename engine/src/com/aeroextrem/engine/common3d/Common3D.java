@@ -23,6 +23,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -173,7 +174,7 @@ public abstract class Common3D extends ScenarioAdapter {
 	 *
 	 * @param mb 3D Renderer
 	 * @param env Belichtungsinformationen */
-	protected void render3D(ModelBatch mb, Environment env) {
+	protected void render3D(@NotNull ModelBatch mb, @NotNull Environment env) {
 		for(BehavingInstance bi : instances.values()) {
 			if(bi.instance instanceof ModelInstance) {
 				ModelInstance model = (ModelInstance) bi.instance;
@@ -185,7 +186,7 @@ public abstract class Common3D extends ScenarioAdapter {
 	/** Rendert 2D Overlay
 	 *
 	 * @param sb 2D Renderer */
-	protected abstract void renderUI(SpriteBatch sb);
+	protected abstract void renderUI(@NotNull SpriteBatch sb);
 
 	/** Berechnet einen Schritt der Physiksimulation */
 	protected void calcPhysics() {
@@ -214,7 +215,8 @@ public abstract class Common3D extends ScenarioAdapter {
 	/** Gibt alle Instanzen dieser Ressource zurück
 	 *
 	 * @param resource Klasse der Ressource */
-	public Array<InstanceIdentifier> getInstances(GameResource resource) {
+	@NotNull
+	public Array<InstanceIdentifier> getInstances(@NotNull GameResource resource) {
 		Array<InstanceIdentifier> array = new Array<>();
 		instances.keySet().forEach(identifier -> {
 			if(identifier.resource == resource) {
@@ -227,7 +229,8 @@ public abstract class Common3D extends ScenarioAdapter {
 	/** Setzt eine Ressource in die Welt
 	 *
 	 * @param res Ressource */
-	public InstanceIdentifier spawn(GameResource res) {
+	@NotNull
+	public InstanceIdentifier spawn(@NotNull GameResource res) {
 		// Neue ID erstellen
 		InstanceIdentifier id = new InstanceIdentifier(res, rand.nextInt());
 		// Neue Instanz erstellen
@@ -245,7 +248,8 @@ public abstract class Common3D extends ScenarioAdapter {
 	/** Setzt eine physikalische Ressource in die Welt
 	 *
 	 * @param res Ressource, die erstellt werden soll. */
-	public InstanceIdentifier spawn(PhysicsResource res) {
+	@NotNull
+	public InstanceIdentifier spawn(@NotNull PhysicsResource res) {
 		// Neue ID erstellen
 		InstanceIdentifier id = new InstanceIdentifier(res, rand.nextInt());
 		// Neue Instanz erstellen
@@ -261,7 +265,7 @@ public abstract class Common3D extends ScenarioAdapter {
 		return id;
 	}
 
-	public int getInstanceCount(GameResource res) {
+	public int getInstanceCount(@NotNull GameResource res) {
 		Integer count = instanceCount.get(res);
 		if(count == null)
 			return 0;
@@ -272,7 +276,7 @@ public abstract class Common3D extends ScenarioAdapter {
 	/** Entfernt die Instanz.
 	 *
 	 * @param identifier ID der Instanz */
-	public boolean kill(InstanceIdentifier identifier) {
+	public boolean kill(@NotNull InstanceIdentifier identifier) {
 		// Gibt es Instanzen des Typs?
 		int count = getInstanceCount(identifier.resource);
 		if(count <= 0)
@@ -303,7 +307,11 @@ public abstract class Common3D extends ScenarioAdapter {
 	 * @param name Name des Behaviours
 	 * @param behaviour Behaviour
 	 * @return Erfolgreich? */
-	public <T extends ModelInstance> boolean addBehaviour(InstanceIdentifier key, String name, BehaviourBase behaviour) {
+	public <T extends ModelInstance> boolean addBehaviour(
+			@NotNull InstanceIdentifier key,
+			@NotNull String name,
+			@NotNull BehaviourBase behaviour
+	) {
 		// Gibt es Instanzen mit dieser ID?
 		BehavingInstance<T> instance = get(key);
 		if(instance == null)
@@ -337,7 +345,10 @@ public abstract class Common3D extends ScenarioAdapter {
 	 * @param key Instanz
 	 * @param name Name des Behaviours
 	 * @return true falls entfernt, false falls nicht gefunden */
-	public <T extends ModelInstance> boolean removeBehaviour(InstanceIdentifier key, String name) {
+	public <T extends ModelInstance> boolean removeBehaviour(
+			@NotNull InstanceIdentifier key,
+			@NotNull String name
+	) {
 		// Gibt es Instanzen mit dieser ID?
 		BehavingInstance<T> instance = get(key);
 		if(instance == null)
@@ -361,7 +372,7 @@ public abstract class Common3D extends ScenarioAdapter {
 	/** Entfernt alle Behaviours
 	 *
 	 * @param key Instanz */
-	public <T extends ModelInstance> boolean clearBehaviours(InstanceIdentifier key) {
+	public <T extends ModelInstance> boolean clearBehaviours(@NotNull InstanceIdentifier key) {
 		// Gibt es Instanzen mit dieser ID?
 		BehavingInstance<T> instance = get(key);
 		if(instance == null)
@@ -375,12 +386,14 @@ public abstract class Common3D extends ScenarioAdapter {
 
 
 	/** Versucht, die zugehörige Instanz zu finden */
-	public <T extends ModelInstance> T getInstance(InstanceIdentifier key) {
+	@Nullable
+	public <T extends ModelInstance> T getInstance(@NotNull InstanceIdentifier key) {
 		return (T) instances.get(key).instance;
 	}
 
 	/** Versucht, die zugehörige BehavingInstance zu finden */
-	public <T extends ModelInstance> BehavingInstance<T> get(InstanceIdentifier key) {
+	@Nullable
+	public <T extends ModelInstance> BehavingInstance<T> get(@NotNull InstanceIdentifier key) {
 		return (BehavingInstance<T>) instances.get(key);
 	}
 

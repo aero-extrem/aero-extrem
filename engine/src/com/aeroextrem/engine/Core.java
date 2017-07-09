@@ -42,6 +42,7 @@ public class Core implements ApplicationListener {
 
 	// Singleton-Pattern
 	private static Core instance;
+	@NotNull
 	public static Core getInstance() {
 		return instance;
 	}

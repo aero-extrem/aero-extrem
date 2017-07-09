@@ -2,6 +2,7 @@ package com.aeroextrem.engine.common3d.resource;
 
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.utils.Disposable;
+import org.jetbrains.annotations.NotNull;
 
 /** Beschreibung der physikalischen Komponente
  *
@@ -21,7 +22,7 @@ public class PhysicsInfo implements Disposable {
 	 * @param mass Gewicht des Objekts
 	 * @param group Gruppen, mit denen sich das Objekt identifiziert. (16 Gruppen, je ein Bit).
 	 * @param mask Gruppen, mit denen das Objekt kollidieren kann. (16 Gruppen, je ein Bit). */
-	public PhysicsInfo(btCollisionShape hitbox, float mass, short group, short mask) {
+	public PhysicsInfo(@NotNull btCollisionShape hitbox, float mass, short group, short mask) {
 		this.hitbox = hitbox;
 		this.mass = mass;
 		this.group = group;

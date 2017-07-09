@@ -1,13 +1,14 @@
 package com.aeroextrem.engine.common3d.resource;
 
 import com.aeroextrem.engine.resource.GameResource;
+import org.jetbrains.annotations.NotNull;
 
 /** Schlüssel zu einer Instanz */
 public class InstanceIdentifier {
 	public final GameResource resource;
 	public final int index;
 
-	public InstanceIdentifier(GameResource resource, int index) {
+	public InstanceIdentifier(@NotNull GameResource resource, int index) {
 		this.resource = resource;
 		this.index = index;
 	}

@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.btFixedConstraint;
 import com.badlogic.gdx.physics.bullet.dynamics.btHingeConstraint;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import org.jetbrains.annotations.NotNull;
 
 import static com.aeroextrem.view.airplane.test.TestPlaneResource.*;
 
@@ -21,13 +22,13 @@ public class TestPlanePhysics implements BehaviourPhysics {
 	private Array<Disposable> despos;
 	
 	@Override
-	public void onCreate(GameResource resource) {
+	public void onCreate(@NotNull GameResource resource) {
 		despos = new Array<>();
 	}
 
 	/** Verbindungen zwischen Teilen erstellen */
 	@Override
-	public void onBindPhysics(btDynamicsWorld world, PhysicsInstance instance) {
+	public void onBindPhysics(@NotNull btDynamicsWorld world, @NotNull PhysicsInstance instance) {
 		// Connect fuselage -> wings
 		Matrix4 conn = new Matrix4().set(new Vector3(1f, 1f, 1f), new Quaternion());
 		btFixedConstraint constrFuselageWings = new btFixedConstraint(
@@ -50,7 +51,11 @@ public class TestPlanePhysics implements BehaviourPhysics {
 	 *
 	 * @param wheelPart ID des rotierenden starren Körpers (Rad)
 	 * @param relativePos Vektor Flugzeug -> Rad  */
-	private void connectWheel(PhysicsInstance instance, String wheelPart, Vector3 relativePos) {
+	private void connectWheel(
+			@NotNull PhysicsInstance instance,
+			@NotNull String wheelPart,
+			@NotNull Vector3 relativePos
+	) {
 		/* Erklärung
 		 * Das erstellt eine Bewegungseinschränkung zwischen statischen Flugzeugteilen und dessen Räder.
 		 * Das Flugzeug rotiert (theoretisch) entlang der Z-Achse um das Rad -> relativePos als pivotInA

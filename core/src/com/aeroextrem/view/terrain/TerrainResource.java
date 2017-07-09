@@ -66,6 +66,7 @@ public class TerrainResource implements PhysicsResource {
 		model = mb.end();
 	}
 
+	@NotNull
 	private PhysicsInfo loadPhysicsGround() {
 		btCompoundShape shape = new btCompoundShape(false);
 		shape.addChildShape(newMatrixAt(0f,		0f,		0f),	 new btStaticPlaneShape(new Vector3( 0f, +1f,  0f), 1f));
@@ -79,12 +80,14 @@ public class TerrainResource implements PhysicsResource {
 	}
 
 	@Override
-	public @NotNull Model getModel() {
+	@NotNull
+	public Model getModel() {
 		return model;
 	}
 
 	@Override
-	public @NotNull ArrayMap<String, PhysicsInfo> getPhysicsNodes() {
+	@NotNull
+	public ArrayMap<String, PhysicsInfo> getPhysicsNodes() {
 		return physicsNodes;
 	}
 

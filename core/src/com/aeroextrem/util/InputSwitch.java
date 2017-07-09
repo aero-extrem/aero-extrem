@@ -1,6 +1,7 @@
 package com.aeroextrem.util;
 
 import com.badlogic.gdx.InputProcessor;
+import org.jetbrains.annotations.NotNull;
 
 import static com.badlogic.gdx.Input.Keys.ESCAPE;
 
@@ -14,11 +15,11 @@ public class InputSwitch implements InputProcessor {
 	/** Input handled? */
 	public boolean enabled;
 
-	public InputSwitch(InputProcessor processor) {
+	public InputSwitch(@NotNull InputProcessor processor) {
 		this(processor, ESCAPE);
 	}
 
-	public InputSwitch(InputProcessor processor, int escapeKey) {
+	public InputSwitch(@NotNull InputProcessor processor, int escapeKey) {
 		this.processor = processor;
 		this.escapeKey = escapeKey;
 	}

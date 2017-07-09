@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Disposable;
+import org.jetbrains.annotations.NotNull;
 
 /** Instanz eines Modells mit physikalischen Eigenschaften */
 public class PhysicsInstance extends ModelInstance implements Disposable {
@@ -19,7 +20,7 @@ public class PhysicsInstance extends ModelInstance implements Disposable {
 	public final btDynamicsWorld world;
 
 	private static final Vector3 localInertia = new Vector3();
-	public PhysicsInstance(PhysicsResource res, btDynamicsWorld world) {
+	public PhysicsInstance(@NotNull PhysicsResource res, @NotNull btDynamicsWorld world) {
 		super(res.getModel());
 
 		this.world = world;

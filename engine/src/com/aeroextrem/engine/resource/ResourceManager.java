@@ -2,6 +2,7 @@ package com.aeroextrem.engine.resource;
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.utils.ArrayMap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** Referenziert alle geladenen Resourcen. */
@@ -20,7 +21,7 @@ public class ResourceManager {
 	 * @param key Klasse der Resource
 	 *
 	 * @throws IllegalStateException Falls die Klasse nicht geladen werden konnte */
-	public static void load(Class<? extends GameResource> key) throws IllegalStateException {
+	public static void load(@NotNull Class<? extends GameResource> key) throws IllegalStateException {
 		GameResource res;
 
 		// Versuche, eine Instanz der Klasse zu erstellen
@@ -45,7 +46,7 @@ public class ResourceManager {
 	 *
 	 * @param key Klasse der Resource
 	 */
-	public static void lateLoad(Class<? extends GameResource> key) throws IllegalStateException {
+	public static void lateLoad(@NotNull Class<? extends GameResource> key) throws IllegalStateException {
 		GameResource res = get(key);
 
 		// Die Resource kann zu diesem Zeitpunkt nicht null sein
@@ -60,7 +61,7 @@ public class ResourceManager {
 	 * Falls die angebene Klasse nicht bekannt ist, geschieht nichts.
 	 *
 	 * @param key Klasse der Resource */
-	public static void unload(Class<? extends GameResource> key) {
+	public static void unload(@NotNull Class<? extends GameResource> key) {
 		GameResource res = resources.get(key);
 		if(res == null)
 			return;
@@ -77,7 +78,7 @@ public class ResourceManager {
 	 * @return Die Resource, falls sie im Speicher ist, andernfalls null. */
 	@Nullable
 	@SuppressWarnings("unchecked")
-	public static <T extends GameResource> T get(Class<T> key) {
+	public static <T extends GameResource> T get(@NotNull Class<T> key) {
 		return (T) resources.get(key);
 	}
 
@@ -89,7 +90,7 @@ public class ResourceManager {
 	 * @param key Klasse der Resource
 	 * @return Die ModelInstance, falls die Resource im Speicher ist, andernfalls null. */
 	@Nullable
-	public static ModelInstance create(Class<? extends GameResource> key) {
+	public static ModelInstance create(@NotNull Class<? extends GameResource> key) {
 		GameResource res = resources.get(key);
 		if(res == null)
 			return null;
