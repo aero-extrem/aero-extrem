@@ -5,6 +5,8 @@ import com.aeroextrem.engine.ScenarioAdapter;
 import com.aeroextrem.scenario.menu.Menu;
 import com.aeroextrem.util.OpaqueBackground;
 import com.aeroextrem.view.ui.Background;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +21,7 @@ public class SplashScreen extends ScenarioAdapter {
 	private Background overlay;
 
 	private boolean active = true;
+	private boolean skipPressedLastFrame = false;
 
 	@Override
 	public void create() {
@@ -133,6 +136,20 @@ public class SplashScreen extends ScenarioAdapter {
 	public void render() {
 		if(!active)
 			return;
+
+		boolean skipPressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
+
+		// Benutzer hat Skip-Knopf erstmals gedrückt: Registrieren
+		if(skipPressed && !skipPressedLastFrame) {
+			skipPressedLastFrame = true;
+		}
+		// Benutzer hat Skip-Knopf losgelassen: Nächster Frame
+		else if(!skipPressed && skipPressedLastFrame) {
+			skipPressedLastFrame = false;
+			nextScreen();
+			render();
+			return;
+		}
 
 		float alpha = 0f;
 		switch (mode) {
