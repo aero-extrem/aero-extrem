@@ -283,6 +283,9 @@ public abstract class Common3D extends ScenarioAdapter {
 		if(instance == null)
 			return false;
 
+		// Behaviours entfernen
+		clearBehaviours(identifier);
+
 		// Entfernen
 		instanceCount.put(identifier.resource, count-1);
 		instances.remove(identifier);
@@ -322,7 +325,7 @@ public abstract class Common3D extends ScenarioAdapter {
 		}
 		if(behaviour instanceof BehaviourInput) {
 			InputProcessor processor = ((BehaviourInput) behaviour).onBindInput();
-			behavioursInput.putProcessor(key.toString(), processor);
+			behavioursInput.putProcessor(key.toString() + name, processor);
 		}
 
 		instance.behaviours.put(name, behaviour);
@@ -344,6 +347,28 @@ public abstract class Common3D extends ScenarioAdapter {
 		BehaviourBase behaviour = instance.behaviours.get(name);
 		behaviour.dispose();
 		instance.behaviours.removeKey(name);
+
+		if(behaviour instanceof BehaviourVisual)
+			behavioursVisual.removeValue((BehaviourVisual) behaviour, true);
+		if(behaviour instanceof BehaviourPhysics)
+			behavioursPhysics.removeValue((BehaviourPhysics) behaviour, true);
+		if(behaviour instanceof BehaviourInput)
+			behavioursInput.removeProcessor(key.toString() + name);
+
+		return true;
+	}
+
+	/** Entfernt alle Behaviours
+	 *
+	 * @param key Instanz */
+	public <T extends ModelInstance> boolean clearBehaviours(InstanceIdentifier key) {
+		// Gibt es Instanzen mit dieser ID?
+		BehavingInstance<T> instance = get(key);
+		if(instance == null)
+			return false;
+
+		for(String b : instance.behaviours.keys())
+			removeBehaviour(key, b);
 
 		return true;
 	}
