@@ -36,7 +36,9 @@ project(":core") {
 		compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
 		compile "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
 		compile "org.jetbrains:annotations:15.0"
+		compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.19.3'
 		testCompile 'junit:junit:4.12'
+		testCompile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.19.3'
 	}
 }
 
