@@ -5,6 +5,7 @@ sourceCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.test.java.srcDirs = [ "test/" ]
 
 project.ext.mainClassName = "com.aeroextrem.engine.Launcher"
 project.ext.assetsDir = new File("../core/assets")

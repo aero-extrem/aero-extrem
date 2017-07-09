@@ -36,6 +36,7 @@ project(":core") {
 		compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
 		compile "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
 		compile "org.jetbrains:annotations:15.0"
+		testCompile 'junit:junit:4.12'
 	}
 }
 
