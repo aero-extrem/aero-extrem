@@ -1,6 +1,7 @@
 package com.aeroextrem.view.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -20,12 +21,20 @@ public class Background extends Actor {
 		colorA = 0.5f;
 	}
 
+	public Background(float colorR, float colorG, float colorB, float colorA) {
+		this.colorR = colorR;
+		this.colorG = colorG;
+		this.colorB = colorB;
+		this.colorA = colorA;
+	}
+
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		// Kontextwechsel SpriteBatch
 		batch.end();
 		// Transparenz
 		Gdx.gl20.glEnable(GL_BLEND);
+		Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
 		// Form zeichnen
 		shaper.begin(Filled);
