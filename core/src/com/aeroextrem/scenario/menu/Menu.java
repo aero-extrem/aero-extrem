@@ -4,7 +4,9 @@ import com.aeroextrem.engine.Core;
 import com.aeroextrem.engine.ScenarioAdapter;
 import com.aeroextrem.scenario.simulation.Simulation;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -33,7 +35,21 @@ public class Menu extends ScenarioAdapter {
 	@Override
 	public void load() {
 		Gdx.input.setInputProcessor(stage);
-		skin = new Skin(Gdx.files.internal("skin/neon-ui.json"));
+		skin = new Skin();
+
+	}
+
+	@Override
+	public void lateLoad() {
+		// FIXME: Disk I/O in render
+		FileHandle skinFile = Gdx.files.internal("skin/neon-ui.json");
+		FileHandle atlasFile = skinFile.sibling(skinFile.nameWithoutExtension() + ".atlas");
+		if (atlasFile.exists()) {
+			// FIXME: Atlas nie freigegeben
+			TextureAtlas atlas = new TextureAtlas(atlasFile);
+			skin.addRegions(atlas);
+		}
+		skin.load(skinFile);
 
 		// Window
 		window = new Window("", skin);
