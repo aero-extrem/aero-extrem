@@ -57,10 +57,10 @@ public class TerrainResource implements PhysicsResource {
 		int attributes = Position | Normal | TextureCoordinates;
 		MeshPartBuilder mpb = mb.part(PART_GROUND, GL20.GL_TRIANGLES, attributes, material);
 		mpb.rect(
-				+SIZE/2, 1f, +SIZE/2,
-				+SIZE/2, 1f, -SIZE/2,
-				-SIZE/2, 1f, -SIZE/2,
-				-SIZE/2, 1f, +SIZE/2,
+				+SIZE/2, -20f, +SIZE/2,
+				+SIZE/2, -20f, -SIZE/2,
+				-SIZE/2, -20f, -SIZE/2,
+				-SIZE/2, -20f, +SIZE/2,
 				0f, 1f, 0f
 		);
 		model = mb.end();
@@ -69,12 +69,8 @@ public class TerrainResource implements PhysicsResource {
 	@NotNull
 	private PhysicsInfo loadPhysicsGround() {
 		btCompoundShape shape = new btCompoundShape(false);
-		shape.addChildShape(newMatrixAt(0f,		0f,		0f),	 new btStaticPlaneShape(new Vector3( 0f, +1f,  0f), 1f));
+		shape.addChildShape(newMatrixAt(0f,		-20f,		0f),	 new btStaticPlaneShape(new Vector3( 0f, +1f,  0f), 1f));
 		shape.addChildShape(newMatrixAt(0f,		+SIZE,	0f),	 new btStaticPlaneShape(new Vector3( 0f, -1f,  0f), 1f));
-		shape.addChildShape(newMatrixAt(-SIZE/2,0f,		0f),	 new btStaticPlaneShape(new Vector3(+1f,  0f,  0f), 1f));
-		shape.addChildShape(newMatrixAt(+SIZE/2,0f,		0f),	 new btStaticPlaneShape(new Vector3(-1f,  0f,  0f), 1f));
-		shape.addChildShape(newMatrixAt(0f,		0f,		-SIZE/2),new btStaticPlaneShape(new Vector3( 0f,  0f, +1f), 1f));
-		shape.addChildShape(newMatrixAt(0f,		0f,		+SIZE/2),new btStaticPlaneShape(new Vector3( 1f,  0f, -1f), 1f));
 
 		return new PhysicsInfo(shape, 0, PhysicsInfo.GROUP_WORLD, PhysicsInfo.GROUP_ALL);
 	}

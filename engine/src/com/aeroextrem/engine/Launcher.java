@@ -1,5 +1,6 @@
 package com.aeroextrem.engine;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
@@ -36,6 +37,10 @@ public class Launcher {
 
 		// Startet die LWJGL
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.addIcon("texture/logo16.png", Files.FileType.Internal);
+		config.addIcon("texture/logo32.png", Files.FileType.Internal);
+		config.addIcon("texture/logo256.png", Files.FileType.Internal);
+		config.addIcon("texture/logo2048.png", Files.FileType.Internal);
 		config.backgroundFPS = 20;
 		config.useHDPI = true;
 		config.vSyncEnabled = true;

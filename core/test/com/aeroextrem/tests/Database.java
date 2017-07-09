@@ -23,8 +23,10 @@ public class Database {
 
 		DBConnection db = new DBConnection(handle);
 		db.open();
+
 		int recording = db.createRecording();
 		db.deleteRecording(recording);
+		
 		db.close();
 	}
 

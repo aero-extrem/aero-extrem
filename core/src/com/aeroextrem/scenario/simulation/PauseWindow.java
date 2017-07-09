@@ -11,6 +11,7 @@ import static com.aeroextrem.util.AeroExtrem.skin;
 public class PauseWindow extends IngameWindow {
 
 	Button options;
+	Button quit;
 
 	public PauseWindow() {
 		// Title
@@ -22,6 +23,12 @@ public class PauseWindow extends IngameWindow {
 		// Optionen
 		options = new TextButton("Optionen", skin);
 		add(options);
+
+		row();
+
+		// Zurück zum Menü
+		quit = new TextButton("Beenden", skin);
+		add(quit);
 	}
 
 

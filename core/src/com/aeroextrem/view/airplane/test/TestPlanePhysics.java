@@ -40,7 +40,7 @@ public class TestPlanePhysics implements BehaviourPhysics {
 		world.addConstraint(constrFuselageWings);
 
 		// Connect fuselage -> wheels
-		connectWheel(instance, NODE_FRONTWHEEL,		new Vector3(1, -1f, 0));
+		connectWheel(instance, NODE_FRONTWHEEL,	new Vector3(1, -1f, 0));
 		connectWheel(instance, NODE_BACKWHEEL_L,	new Vector3(-1f, -1f, -0.3f));
 		connectWheel(instance, NODE_BACKWHEEL_R,	new Vector3(-1f, -1f, 0.3f));
 	}

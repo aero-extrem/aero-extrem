@@ -12,4 +12,7 @@ public interface BehaviourInput extends BehaviourBase {
 	@NotNull
 	InputProcessor onBindInput();
 
+	/** Wird jeden Frame ausgeführt */
+	void onInputUpdate();
+
 }

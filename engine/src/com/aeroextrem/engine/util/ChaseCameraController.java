@@ -79,6 +79,8 @@ public class ChaseCameraController extends InputAdapter {
 	/** How many radians the camera moves each pixel dragged */
 	public			float		radPerPixel	= 0.005f;
 
+	/** Should the camera rotate with the followed object? */
+	public 			boolean		fixAngle = true;
 
 	/** Start chasing an object
 	 *
@@ -92,6 +94,17 @@ public class ChaseCameraController extends InputAdapter {
 	@Override
 	public boolean keyDown (int keycode) {
 		keys.put(keycode, keycode);
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		switch (character) {
+			case 'm':
+			case 'M':
+				fixAngle = !fixAngle;
+				break;
+		}
 		return false;
 	}
 
@@ -115,6 +128,12 @@ public class ChaseCameraController extends InputAdapter {
 		if(phi < 0)
 			phi = 2*PI - Math.abs(phi);
 
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(int amount) {
+		radius = Math.max(5f, radius + amount * 0.2f);
 		return false;
 	}
 
@@ -162,7 +181,8 @@ public class ChaseCameraController extends InputAdapter {
 		float upY = MathUtils.cos(theta - (PI/2));
 		float upZ = MathUtils.sin(theta - (PI/2)) * MathUtils.sin(phi);
 
-		camera.up.set(upX, upY, upZ).mul(chasedRot);
+		if(fixAngle)
+			camera.up.set(upX, upY, upZ).mul(chasedRot);
 
 		camera.update(false);
 	}

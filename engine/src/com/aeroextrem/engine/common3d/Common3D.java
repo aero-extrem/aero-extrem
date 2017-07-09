@@ -31,6 +31,7 @@ import java.util.Random;
 import static com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute.AmbientLight;
 
 /** Basis für ein 3D Szenario */
+@SuppressWarnings("WeakerAccess")
 public abstract class Common3D extends ScenarioAdapter {
 
 	protected Random rand = new Random();
@@ -46,7 +47,8 @@ public abstract class Common3D extends ScenarioAdapter {
 	// Behaviours
 	private Array<BehaviourVisual> behavioursVisual;
 	private Array<BehaviourPhysics> behavioursPhysics;
-	private InputMappedMultiplexer behavioursInput;
+	private Array<BehaviourInput> behavioursInput;
+	private InputMappedMultiplexer behavioursInputProcessors;
 	protected static final String INPUT_BEHAVIOURS = "behaviours";
 
 	// Anzeige
@@ -98,8 +100,9 @@ public abstract class Common3D extends ScenarioAdapter {
 		despos = new Array<>();
 		behavioursVisual = new Array<>();
 		behavioursPhysics = new Array<>();
-		behavioursInput = new InputMappedMultiplexer();
-		inputProcessor.putProcessor(INPUT_BEHAVIOURS, behavioursInput);
+		behavioursInput = new Array<>();
+		behavioursInputProcessors = new InputMappedMultiplexer();
+		inputProcessor.putProcessor(INPUT_BEHAVIOURS, behavioursInputProcessors);
 
 		// Physik
 		collisionConfig = new btDefaultCollisionConfiguration();
@@ -124,6 +127,8 @@ public abstract class Common3D extends ScenarioAdapter {
 		// Hintergrund
 		Gdx.gl.glClearColor(bgColorR, bgColorG, bgColorB, bgColorA);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
+		handleInput();
 
 		updateCamera();
 
@@ -169,6 +174,12 @@ public abstract class Common3D extends ScenarioAdapter {
 
 	/** Kameraposition ausrechnen */
 	protected abstract void updateCamera();
+
+	protected void handleInput() {
+		// TODO Extend InputProcessor
+		for(BehaviourInput b : behavioursInput)
+			b.onInputUpdate();
+	}
 
 	/** Rendert 3D Sicht
 	 *
@@ -333,7 +344,8 @@ public abstract class Common3D extends ScenarioAdapter {
 		}
 		if(behaviour instanceof BehaviourInput) {
 			InputProcessor processor = ((BehaviourInput) behaviour).onBindInput();
-			behavioursInput.putProcessor(key.toString() + name, processor);
+			behavioursInput.add((BehaviourInput) behaviour);
+			behavioursInputProcessors.putProcessor(key.toString() + name, processor);
 		}
 
 		instance.behaviours.put(name, behaviour);
@@ -363,8 +375,10 @@ public abstract class Common3D extends ScenarioAdapter {
 			behavioursVisual.removeValue((BehaviourVisual) behaviour, true);
 		if(behaviour instanceof BehaviourPhysics)
 			behavioursPhysics.removeValue((BehaviourPhysics) behaviour, true);
-		if(behaviour instanceof BehaviourInput)
-			behavioursInput.removeProcessor(key.toString() + name);
+		if(behaviour instanceof BehaviourInput) {
+			behavioursInput.removeValue((BehaviourInput) behaviour, true);
+			behavioursInputProcessors.removeProcessor(key.toString() + name);
+		}
 
 		return true;
 	}

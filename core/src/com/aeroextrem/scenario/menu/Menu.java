@@ -4,6 +4,7 @@ import com.aeroextrem.engine.Core;
 import com.aeroextrem.engine.ScenarioAdapter;
 import com.aeroextrem.scenario.simulation.Simulation;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -25,6 +26,9 @@ public class Menu extends ScenarioAdapter {
 	private Window window;
 	private TextButton quit, simulation, options;
 
+	// Audio
+	private Music music;
+
 	/** Erstellt das Hauptmenü */
 	@Override
 	public void create() {
@@ -37,6 +41,9 @@ public class Menu extends ScenarioAdapter {
 		Gdx.input.setInputProcessor(stage);
 		skin = new Skin();
 
+		music = Gdx.audio.newMusic(Gdx.files.internal("sounds/musicTitle.mp3"));
+		music.setVolume(0.5f);
+		music.setLooping(true);
 	}
 
 	@Override
@@ -97,6 +104,8 @@ public class Menu extends ScenarioAdapter {
 
 		window.pack();
 		stage.addActor(window);
+
+		music.play();
 	}
 
 	/** Zeigt das Hauptmenü an */
@@ -130,6 +139,8 @@ public class Menu extends ScenarioAdapter {
 	@Override
 	public void dispose() {
 		stage.dispose();
+		music.stop();
+		music.dispose();
 	}
 
 	private static class SingleClickListener extends ClickListener {
