@@ -44,6 +44,9 @@ public class Core implements ApplicationListener {
 	private static Core instance;
 	@NotNull
 	public static Core getInstance() {
+		// Nur für JUnit Tests
+		if(instance == null)
+			instance = new Core(new ScenarioAdapter());
 		return instance;
 	}
 
