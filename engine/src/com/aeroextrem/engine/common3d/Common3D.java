@@ -219,6 +219,9 @@ public abstract class Common3D extends ScenarioAdapter {
 		modelBatch.dispose();
 		spriteBatch.dispose();
 
+		for(InstanceIdentifier i : instances.keySet())
+			kill(i);
+
 		for(Disposable d : despos)
 			d.dispose();
 	}
