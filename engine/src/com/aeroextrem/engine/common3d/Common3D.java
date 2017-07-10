@@ -210,6 +210,12 @@ public abstract class Common3D extends ScenarioAdapter {
 	/** Gibt den Speicher wieder frei */
 	@Override
 	public void dispose() {
+		for(InstanceIdentifier i : instances.keySet())
+			kill(i);
+
+		for(Disposable d : despos)
+			d.dispose();
+
 		dynamicsWorld.dispose();
 		constraintSolver.dispose();
 		broadphase.dispose();
@@ -218,12 +224,6 @@ public abstract class Common3D extends ScenarioAdapter {
 
 		modelBatch.dispose();
 		spriteBatch.dispose();
-
-		for(InstanceIdentifier i : instances.keySet())
-			kill(i);
-
-		for(Disposable d : despos)
-			d.dispose();
 	}
 
 	/** Gibt alle Instanzen dieser Ressource zurück
