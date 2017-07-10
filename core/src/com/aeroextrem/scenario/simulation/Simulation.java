@@ -92,8 +92,8 @@ public class Simulation extends Common3D {
 		ResourceManager.lateLoad(TestPlaneResource.class);
 
 		super.lateLoad();
-		menu.create();
-		menuController.createMenu();
+
+		createUI();
 
 		skybox = new EnvironmentCubemap(skyPosX, skyNegX, skyPosY, skyNegY, skyPosZ, skyNegZ);
 
@@ -106,6 +106,11 @@ public class Simulation extends Common3D {
 		spawnObjects();
 
 		setupInput();
+	}
+
+	protected void createUI() {
+		menu.create();
+		menuController.createMenu(new PauseWindow());
 	}
 
 	protected void spawnObjects() {

@@ -6,8 +6,6 @@ import com.aeroextrem.scenario.menu.Menu;
 import com.aeroextrem.util.AeroExtrem;
 import com.aeroextrem.view.ui.IngameMenu;
 import com.aeroextrem.view.ui.OptionsWindow;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import org.jetbrains.annotations.NotNull;
@@ -24,27 +22,26 @@ class MenuController {
 		this.menu = menu;
 	}
 
-	void createMenu() {
+	void createMenu(PauseWindow window) {
 		// Hauptfenster
-		PauseWindow main = new PauseWindow();
-		main.options.addListener(new WindowSwitchClickListener(OPTIONS));
-		main.quit.addListener(new ClickListener() {
+		window.options.addListener(new WindowSwitchClickListener(OPTIONS));
+		window.quit.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				Core.getInstance().setScenario(new Menu());
 			}
 		});
-		main.record.addListener(new ClickListener() {
+		window.record.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if(AeroExtrem.isRecording) {
-					main.recordStatus.setText(main.recordOff);
+					window.recordStatus.setText(window.recordOff);
 					AeroExtrem.recorder.commit();
 					AeroExtrem.isRecording = false;
 					AeroExtrem.recorder = null;
 				}
 				else {
-					main.recordStatus.setText(main.recordOn);
+					window.recordStatus.setText(window.recordOn);
 					int ID = -1;
 					try {
 						ID = AeroExtrem.db.createRecording();
@@ -62,7 +59,7 @@ class MenuController {
 		OptionsWindow options = new OptionsWindow();
 		options.exit.addListener(new WindowSwitchClickListener(MAIN));
 
-		menu.windows.put(MAIN, main);
+		menu.windows.put(MAIN, window);
 		menu.windows.put(OPTIONS, options);
 
 		menu.updateWindowList();

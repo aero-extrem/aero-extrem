@@ -65,9 +65,7 @@ public class DBConnection {
 
 			rset = stmt.executeQuery();
 			while(rset.next()) {
-				Recording r = new Recording();
-				r.ID = rset.getInt(1);
-				r.time = rset.getLong(2);
+				Recording r = new Recording(rset.getInt(1), rset.getLong(2));
 
 				recordingList[i++] = r;
 			}

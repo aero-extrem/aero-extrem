@@ -19,6 +19,10 @@ public class PauseWindow extends IngameWindow {
 	final String recordOff = "AUS";
 
 	public PauseWindow() {
+		create();
+	}
+
+	protected void create() {
 		// Title
 		Label title = new Label("Pause", skin);
 		add(title);
@@ -43,6 +47,5 @@ public class PauseWindow extends IngameWindow {
 		recordStatus = new Label(recordOff, skin);
 		add(recordStatus);
 	}
-
 
 }
