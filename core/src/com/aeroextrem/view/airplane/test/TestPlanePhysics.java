@@ -20,6 +20,14 @@ public class TestPlanePhysics implements BehaviourPhysics {
 
 	// Liste der belegten Resourcen
 	private Array<Disposable> despos;
+
+	private PhysicsInstance instance;
+	
+	private final TestPlaneData data;
+	
+	public TestPlanePhysics(TestPlaneData data) {
+		this.data = data;
+	}
 	
 	@Override
 	public void onCreate(@NotNull GameResource resource) {
@@ -29,6 +37,8 @@ public class TestPlanePhysics implements BehaviourPhysics {
 	/** Verbindungen zwischen Teilen erstellen */
 	@Override
 	public void onBindPhysics(@NotNull btDynamicsWorld world, @NotNull PhysicsInstance instance) {
+
+		this.instance = instance;
 		// Connect fuselage -> wings
 		Matrix4 conn = new Matrix4().set(new Vector3(1f, 1f, 1f), new Quaternion());
 		btFixedConstraint constrFuselageWings = new btFixedConstraint(
@@ -74,7 +84,24 @@ public class TestPlanePhysics implements BehaviourPhysics {
 	/** Aerodynamische Kräfte errechnen */
 	@Override
 	public void physicsTick(float deltaTime) {
-		// TODO ( ͡° ͜ʖ ͡° )
+		Vector3 vel = instance.partMap.get(NODE_FUSELAGE).rb.getLinearVelocity();
+		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(vel.scl(Math.min(vel.len2() * 0.02f, 0.8f)), Vector3.Zero);
+
+		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(new Vector3(0f, data.pitch, 0f).mul(instance.partMap.get(NODE_FUSELAGE).rb.getOrientation()).scl(300f), Vector3.Y);
+		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(new Vector3(0f, -data.pitch, 0f).mul(instance.partMap.get(NODE_FUSELAGE).rb.getOrientation()).scl(3000f), new Vector3(0f, -1 ,0f));
+
+		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(new Vector3(0f, data.roll, 0f).mul(instance.partMap.get(NODE_FUSELAGE).rb.getOrientation()).scl(30f), Vector3.Z);
+		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(new Vector3(0f, -data.roll, 0f).mul(instance.partMap.get(NODE_FUSELAGE).rb.getOrientation()).scl(30f), new Vector3(0f, 0f, -1f));
+
+		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(new Vector3(0f, 0f, data.yaw).mul(instance.partMap.get(NODE_FUSELAGE).rb.getOrientation()).scl(30f), Vector3.X);
+		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(new Vector3(0f, 0f, data.yaw).mul(instance.partMap.get(NODE_FUSELAGE).rb.getOrientation()).scl(30f), new Vector3(-1f, 0f, 0f));
+
+
+		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(new Vector3(data.thrust, 0f, 0f).mul(instance.partMap.get(NODE_FUSELAGE).rb.getOrientation()).scl(1000f), new Vector3(-1f, 0f, 0f));
+
+		if(data.brakes) {
+			instance.partMap.get(NODE_FRONTWHEEL).rb.setAngularFactor(.1f);
+		}
 	}
 
 	/** Verbindungen zwischen Teilen löschen */
@@ -84,4 +111,5 @@ public class TestPlanePhysics implements BehaviourPhysics {
 			d.dispose();
 	}
 
+	
 }
