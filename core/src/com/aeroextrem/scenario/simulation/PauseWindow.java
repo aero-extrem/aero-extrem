@@ -12,6 +12,11 @@ public class PauseWindow extends IngameWindow {
 
 	Button options;
 	Button quit;
+	Button record;
+	Label recordStatus;
+
+	final String recordOn = "AN";
+	final String recordOff = "AUS";
 
 	public PauseWindow() {
 		// Title
@@ -29,6 +34,14 @@ public class PauseWindow extends IngameWindow {
 		// Zurück zum Menü
 		quit = new TextButton("Beenden", skin);
 		add(quit);
+
+		row();
+
+		// Aufnahme starten/stoppen
+		record = new TextButton("Aufnahme: ", skin);
+		add(record);
+		recordStatus = new Label(recordOff, skin);
+		add(recordStatus);
 	}
 
 

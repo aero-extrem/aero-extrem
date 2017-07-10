@@ -1,5 +1,6 @@
 package com.aeroextrem.scenario.menu;
 
+import com.aeroextrem.database.Recording;
 import com.aeroextrem.engine.Core;
 import com.aeroextrem.engine.ScenarioAdapter;
 import com.aeroextrem.scenario.simulation.Simulation;
@@ -12,8 +13,12 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import java.sql.SQLException;
+
+import static com.aeroextrem.util.AeroExtrem.db;
 import static com.aeroextrem.util.AeroExtrem.skin;
 
 /** Hauptmenü-Szenario nach dem MVC-Pattern.
@@ -21,10 +26,21 @@ import static com.aeroextrem.util.AeroExtrem.skin;
  * Dies ist der Controller. */
 public class Menu extends ScenarioAdapter {
 
-	// Views
+	// Views (Main)
 	private Stage stage;
 	private Window window;
-	private TextButton quit, simulation, options;
+	private TextButton quit, simulation, recordings;
+
+	private int page;
+	private static final int NUM_PAGE_ITEMS = 10;
+
+	// Views (Recordings)
+	private Window recordingsWindow;
+	private List<Recording> recordList;
+	private TextButton pageLeft;
+	private TextButton pageRight;
+	private HorizontalGroup pagers;
+	private TextButton recordingsBack;
 
 	// Audio
 	private Music music;
@@ -58,6 +74,13 @@ public class Menu extends ScenarioAdapter {
 		}
 		skin.load(skinFile);
 
+		createMainWindow();
+		createRecordingWindow();
+
+		music.play();
+	}
+
+	private void createMainWindow() {
 		// Window
 		window = new Window("", skin);
 		window.setMovable(false);
@@ -66,16 +89,14 @@ public class Menu extends ScenarioAdapter {
 		// Title
 		Label title = new Label("Aero EXTREM Main Menu", skin);
 
-		// TODO: Ersetzen durch Inhalt
-		Label nothingHere = new Label("Die Simulation ist noch nicht ganz fertig.", skin);
-
 		Table actions = new Table(skin);
 		simulation = new TextButton("Simulation >", skin);
-		options = new TextButton("Optionen >", skin);
+		recordings = new TextButton("Aufnahmen >", skin);
 		quit = new TextButton("Beenden", skin);
 
 		actions.add(simulation);
-		actions.add(options);
+		actions.row();
+		actions.add(recordings);
 		actions.row();
 		actions.add(quit);
 		actions.pack();
@@ -94,9 +115,15 @@ public class Menu extends ScenarioAdapter {
 			}
 		});
 
+		recordings.addListener(new SingleClickListener() {
+			@Override public boolean singleClicked(float x, float y) {
+				recordingsWindow.setVisible(true);
+				window.setVisible(false);
+				return true;
+			}
+		});
+
 		window.add(title);
-		window.row();
-		window.add(nothingHere);
 		window.row();
 		window.add(actions);
 		window.row();
@@ -104,8 +131,81 @@ public class Menu extends ScenarioAdapter {
 
 		window.pack();
 		stage.addActor(window);
+	}
 
-		music.play();
+	private void createRecordingWindow() {
+		recordingsWindow = new Window("Recordings", skin);
+		recordingsWindow.setVisible(false);
+		recordingsWindow.setModal(true);
+		recordingsWindow.setMovable(false);
+		recordingsWindow.setKeepWithinStage(true);
+		recordingsWindow.setPosition(stage.getWidth() / 2 - 320, stage.getHeight() / 2 - 240);
+		recordingsWindow.setSize(640, 480);
+
+		pagers = new HorizontalGroup();
+		pagers.align(Align.bottomRight);
+		pageLeft = new TextButton("<", skin);
+		pageRight = new TextButton(">", skin);
+		pagers.addActor(pageLeft);
+		pagers.addActor(pageRight);
+		recordingsBack = new TextButton("Zurück", skin);
+
+		recordList = new List<>(skin);
+		try {
+			recordList.setItems(db.listRecordings(0, NUM_PAGE_ITEMS));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		recordingsBack.addListener(new SingleClickListener() {
+			@Override public boolean singleClicked(float x, float y) {
+				recordingsWindow.setVisible(false);
+				window.setVisible(true);
+				return true;
+			}
+		});
+
+		pageLeft.addListener(new SingleClickListener() {
+			@Override public boolean singleClicked(float x, float y) {
+				if(page < 1)
+					return false;
+
+				try {
+					page--;
+					int offset = NUM_PAGE_ITEMS * page;
+					recordList.setItems(db.listRecordings(offset, NUM_PAGE_ITEMS));
+
+					pageLeft.setLayoutEnabled(page != 0);
+				} catch(SQLException e) {
+					e.printStackTrace();
+				}
+
+				return true;
+			}
+		});
+
+		pageRight.addListener(new SingleClickListener() {
+			@Override public boolean singleClicked(float x, float y) {
+				try {
+					page++;
+					int offset = NUM_PAGE_ITEMS * page;
+					recordList.setItems(db.listRecordings(offset, NUM_PAGE_ITEMS));
+					pageRight.setLayoutEnabled(recordList.getItems().size != 0);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+				return true;
+			}
+		});
+
+		recordingsWindow.addActor(recordList);
+		recordingsWindow.row();
+		recordingsWindow.addActor(pagers);
+		recordingsWindow.row();
+		recordingsWindow.addActor(recordingsBack);
+
+		stage.addActor(recordingsWindow);
 	}
 
 	/** Zeigt das Hauptmenü an */
