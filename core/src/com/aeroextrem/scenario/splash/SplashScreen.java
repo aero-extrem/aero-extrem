@@ -1,14 +1,19 @@
 package com.aeroextrem.scenario.splash;
 
+import com.aeroextrem.database.DBConnection;
 import com.aeroextrem.engine.Core;
 import com.aeroextrem.engine.ScenarioAdapter;
 import com.aeroextrem.scenario.menu.Menu;
+import com.aeroextrem.util.AeroExtrem;
 import com.aeroextrem.util.OpaqueBackground;
 import com.aeroextrem.view.ui.Background;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.Align;
 import org.jetbrains.annotations.Nullable;
 
 /** Willkommens-Bildschirm */
@@ -23,16 +28,44 @@ public class SplashScreen extends ScenarioAdapter {
 	private boolean active = true;
 	private boolean skipPressedLastFrame = false;
 
+	private Texture textureFullLogo, textureLibGDX, textureLWJGL;
+
 	@Override
 	public void create() {
 		this.stage = new Stage();
 
+		float dim = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		float format = 1f;
+
+		// TITLE
 		this.scrTitle = new Group();
-		scrTitle.addActor(new OpaqueBackground(1f, 0f, 0f));
+		scrTitle.addActor(new Background(0f, 0f, 0f, 1f));
+
+		Image logo = new Image(textureFullLogo = new Texture("texture/logo4096.png"));
+		format = textureFullLogo.getWidth() / textureFullLogo.getHeight();
+		logo.setSize(dim * 0.8f * format, dim * 0.8f);
+		logo.setPosition(stage.getWidth() / 2 - logo.getWidth() / 2,stage.getHeight() / 2 - logo.getHeight() / 2);
+		scrTitle.addActor(logo);
+
+		// TEAM
 		this.scrTeam = new Group();
-		scrTeam.addActor(new OpaqueBackground(0f, 1f, 0f));
+		scrTeam.addActor(new Background(1f, 1f, 1f, 1f));
+
+		Image lwjgl = new Image(textureLWJGL = new Texture("texture/logoLWJGL.png"));
+		format = textureLWJGL.getWidth() / textureLWJGL.getHeight();
+		lwjgl.setSize(dim * 0.5f * format, dim * 0.5f);
+		lwjgl.setPosition(stage.getWidth() / 2 - lwjgl.getWidth() / 2,stage.getHeight() / 2 - lwjgl.getHeight() / 2);
+		scrTeam.addActor(lwjgl);
+
+		// ENGINE
 		this.scrEngine = new Group();
-		scrEngine.addActor(new OpaqueBackground(0f, 0f, 1f));
+		scrEngine.addActor(new Background(1f, 1f, 1f, 1f));
+
+		Image libGDX = new Image(textureLibGDX = new Texture("texture/logoGDX.jpg"));
+		format = textureLibGDX.getWidth() / textureLibGDX.getHeight();
+		libGDX.setSize(dim * 0.7f * format, dim * 0.7f);
+		libGDX.setPosition(stage.getWidth() / 2 - libGDX.getWidth() / 2,stage.getHeight() / 2 - libGDX.getHeight() / 2);
+		scrEngine.addActor(libGDX);
 
 		stage.addActor(scrTitle);
 		stage.addActor(scrTeam);
@@ -46,6 +79,9 @@ public class SplashScreen extends ScenarioAdapter {
 	@Override
 	public void dispose() {
 		stage.dispose();
+		textureFullLogo.dispose();
+		textureLibGDX.dispose();
+		textureLWJGL.dispose();
 	}
 
 	/** Derzeitiges Logo */
@@ -121,7 +157,11 @@ public class SplashScreen extends ScenarioAdapter {
 	/** Disk I/O */
 	@Override
 	public void load() {
-		super.load();
+		// FIXME Woanders aufrufen und besser machen
+		AeroExtrem.db = new DBConnection(Gdx.files.external("aero.db"));
+		try {
+			AeroExtrem.db.open();
+		} catch (Exception e) {}
 	}
 
 	/** Scene2d Baum aufbauen */
