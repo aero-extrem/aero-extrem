@@ -210,8 +210,8 @@ public abstract class Common3D extends ScenarioAdapter {
 	/** Gibt den Speicher wieder frei */
 	@Override
 	public void dispose() {
-		for(InstanceIdentifier i : instances.keySet())
-			kill(i);
+		while(!instances.isEmpty())
+			kill(instances.keySet().iterator().next());
 
 		for(Disposable d : despos)
 			d.dispose();
