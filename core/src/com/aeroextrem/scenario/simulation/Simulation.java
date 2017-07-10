@@ -171,6 +171,7 @@ public class Simulation extends Common3D {
 		debugFont.draw(sb, String.format("[BLUE]Plane Spd:[] [[%03.2f]]",
 				plane.partMap.get(NODE_FUSELAGE).rb.getLinearVelocity().len()), 20, 140);
 
+		debugFont.draw(sb, String.format("[GREEN]Thrust:[] [[%.2f]]", planeData.thrust), Gdx.graphics.getWidth() / 2, 80);
 		debugFont.draw(sb, String.format("[GREEN]Pitch Input:[] [[%.2f]]", planeData.pitch), Gdx.graphics.getWidth() / 2, 60);
 		debugFont.draw(sb, String.format("[GREEN]Yaw Input:[] [[%.2f]]", planeData.yaw), Gdx.graphics.getWidth() / 2, 40);
 		debugFont.draw(sb, String.format("[GREEN]Roll Input:[] [[%.2f]]", planeData.roll), Gdx.graphics.getWidth() / 2, 20);

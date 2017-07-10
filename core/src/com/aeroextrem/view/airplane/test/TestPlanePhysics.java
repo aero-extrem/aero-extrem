@@ -87,21 +87,33 @@ public class TestPlanePhysics implements BehaviourPhysics {
 		Vector3 vel = instance.partMap.get(NODE_FUSELAGE).rb.getLinearVelocity();
 		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(vel.scl(Math.min(vel.len2() * 0.02f, 0.8f)), Vector3.Zero);
 
-		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(new Vector3(0f, data.pitch, 0f).mul(instance.partMap.get(NODE_FUSELAGE).rb.getOrientation()).scl(300f), Vector3.Y);
-		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(new Vector3(0f, -data.pitch, 0f).mul(instance.partMap.get(NODE_FUSELAGE).rb.getOrientation()).scl(3000f), new Vector3(0f, -1 ,0f));
+		forceOnPlane(calcForce(0f, 300 * data.pitch, 0f), 2f, 0f, 0f);
+		forceOnPlane(calcForce(0f, -300 * data.pitch, 0f), -2f, 0f, 0f);
 
-		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(new Vector3(0f, data.roll, 0f).mul(instance.partMap.get(NODE_FUSELAGE).rb.getOrientation()).scl(30f), Vector3.Z);
-		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(new Vector3(0f, -data.roll, 0f).mul(instance.partMap.get(NODE_FUSELAGE).rb.getOrientation()).scl(30f), new Vector3(0f, 0f, -1f));
+		forceOnPlane(calcForce(0f, 300 * data.roll, 0f), 0f, 0f, 2f);
+		forceOnPlane(calcForce(0f, -300 * data.roll, 0f), 0f, 0f, -2f);
 
-		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(new Vector3(0f, 0f, data.yaw).mul(instance.partMap.get(NODE_FUSELAGE).rb.getOrientation()).scl(30f), Vector3.X);
-		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(new Vector3(0f, 0f, data.yaw).mul(instance.partMap.get(NODE_FUSELAGE).rb.getOrientation()).scl(30f), new Vector3(-1f, 0f, 0f));
+		forceOnPlane(calcForce(0f, 0f, 300 * data.yaw), 2f, 0f, 0f);
+		forceOnPlane(calcForce(0f, 0f, -300 * data.yaw), -2f, 0f, 0f);
 
-
-		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(new Vector3(data.thrust, 0f, 0f).mul(instance.partMap.get(NODE_FUSELAGE).rb.getOrientation()).scl(1000f), new Vector3(-1f, 0f, 0f));
+		forceOnPlane(calcForce(1000f * data.thrust, 0f, 0f), -1f, 0f, 0f);
 
 		if(data.brakes) {
-			instance.partMap.get(NODE_FRONTWHEEL).rb.setAngularFactor(.1f);
+			instance.partMap.get(NODE_FRONTWHEEL).rb.setAngularVelocity(Vector3.Zero);
 		}
+	}
+
+	private final Vector3 helper2 = new Vector3();
+	private void forceOnPlane(Vector3 force, float posX, float posY, float posZ) {
+		instance.partMap.get(NODE_FUSELAGE).rb.applyForce(force, helper2.set(posX, posY, posZ));
+	}
+
+	private final Vector3 helper = new Vector3();
+	private Vector3 calcForce(float x, float y, float z) {
+		helper.set(x, y, z);
+		Quaternion quat = instance.partMap.get(NODE_FUSELAGE).rb.getOrientation();
+		helper.mul(quat);
+		return helper;
 	}
 
 	/** Verbindungen zwischen Teilen löschen */
