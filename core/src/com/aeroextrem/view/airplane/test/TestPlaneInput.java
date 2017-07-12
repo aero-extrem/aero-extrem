@@ -130,7 +130,7 @@ public class TestPlaneInput implements BehaviourInput {
 				if(keys.containsKey(Q))
 					data.roll = Math.max(-1f, data.roll - DEFLECT_SPD);
 				else if(keys.containsKey(E))
-					data.roll = Math.min(1f, data.roll - DEFLECT_SPD);
+					data.roll = Math.min(1f, data.roll + DEFLECT_SPD);
 
 				if(keys.containsKey(SHIFT_LEFT))
 					data.thrust = Math.min(1f, data.thrust + THRUST_SPD);

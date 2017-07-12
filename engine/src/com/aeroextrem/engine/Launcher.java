@@ -42,7 +42,7 @@ public class Launcher {
 		config.addIcon("texture/logo256.png", Files.FileType.Internal);
 		config.addIcon("texture/logo2048.png", Files.FileType.Internal);
 		config.backgroundFPS = 20;
-		config.useHDPI = true;
+		//config.useHDPI = true;
 		config.vSyncEnabled = true;
 
 		Core engine = new Core(startScenario);

@@ -1,4 +1,4 @@
-package com.aeroextrem.view.terrain;
+package com.aeroextrem.view.block;
 
 import com.aeroextrem.engine.common3d.resource.PhysicsInfo;
 import com.aeroextrem.engine.common3d.resource.PhysicsResource;
@@ -11,68 +11,58 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
-import com.badlogic.gdx.physics.bullet.collision.btStaticPlaneShape;
+import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
 import com.badlogic.gdx.utils.ArrayMap;
 import org.jetbrains.annotations.NotNull;
 
 import static com.badlogic.gdx.graphics.VertexAttributes.Usage.*;
 
 /** Ressource für den Boden */
-public class TerrainResource implements PhysicsResource {
+public class BlockResource implements PhysicsResource {
+
+	public static final float SIZE = 1f;
 
 	// IDs
-	public static final String PART_GROUND =	"ground";
-	public static final String VISUAL_GROUND =	"ground";
-	public static final String PHYS_GROUND 	=	"ground";
-	
+	public static final String PART = "block";
+
 	private ArrayMap<String, PhysicsInfo> physicsNodes;
 	private Model model;
 	private Pixmap pixmap;
 
-	public static final float SIZE = 20000f;
-	
+
 	@Override
 	public void load() {
 		physicsNodes = new ArrayMap<>(1);
 
 		pixmap = new Pixmap(Gdx.files.internal("texture/ground.jpg"));
-		physicsNodes.put(PHYS_GROUND, loadPhysicsGround());
+		physicsNodes.put(PART, loadPhysics());
 	}
 
 	@Override
 	public void commit() {
 		// Texturen
-		//Texture texture = new Texture(pixmap);
-		//Material material = new Material();
-		//material.set(TextureAttribute.createDiffuse(texture));
+		Texture texture = new Texture(pixmap);
+		Material material = new Material();
+		material.set(TextureAttribute.createDiffuse(texture));
 
 		// Modell
 		ModelBuilder mb = new ModelBuilder();
 		mb.begin();
-		mb.node().id = VISUAL_GROUND;
-		/*mb.node().id = VISUAL_GROUND;
+		mb.node().id = PART;
+		mb.node().id = PART;
 		mb.manage(texture);
 		int attributes = Position | Normal | TextureCoordinates;
-		MeshPartBuilder mpb = mb.part(PART_GROUND, GL20.GL_TRIANGLES, attributes, material);
-		mpb.rect(
-				+SIZE/2, -20f, +SIZE/2,
-				+SIZE/2, -20f, -SIZE/2,
-				-SIZE/2, -20f, -SIZE/2,
-				-SIZE/2, -20f, +SIZE/2,
-				0f, 1f, 0f
-		);*/
+		MeshPartBuilder mpb = mb.part(PART, GL20.GL_TRIANGLES, attributes, material);
+		BoxShapeBuilder.build(mpb, SIZE, SIZE, SIZE);
 		model = mb.end();
 	}
 
 	@NotNull
-	private PhysicsInfo loadPhysicsGround() {
-		btCompoundShape shape = new btCompoundShape(false);
-		shape.addChildShape(newMatrixAt(0f,		-20f,		0f),	 new btStaticPlaneShape(new Vector3( 0f, +1f,  0f), 1f));
-		shape.addChildShape(newMatrixAt(0f,		+SIZE,	0f),	 new btStaticPlaneShape(new Vector3( 0f, -1f,  0f), 1f));
-
+	private PhysicsInfo loadPhysics() {
+		btBoxShape shape = new btBoxShape(new Vector3(SIZE, SIZE, SIZE));
+		
 		return new PhysicsInfo(shape, 0, PhysicsInfo.GROUP_WORLD, PhysicsInfo.GROUP_ALL);
 	}
 
@@ -92,10 +82,5 @@ public class TerrainResource implements PhysicsResource {
 	public void dispose() {
 		model.dispose();
 	}
-	
-	/** Bequemlichkeits-Methode, die eine Matrix mit angegeben Koordinaten erstellt. */
-	private static Matrix4 newMatrixAt(float x, float y, float z) {
-		return new Matrix4().translate(x, y, z);
-	}
-	
+
 }

@@ -63,7 +63,7 @@ public class PlaybackSimulation extends Simulation {
 	}
 
 	private void setData(RecordRow row) {
-		PhysicsPartInstance part = plane.partMap.get(NODE_FUSELAGE);
+		PhysicsPartInstance part = plane.part;
 		part.ms.transform.set(
 				row.PosX, row.PosY, row.PosZ,
 				row.RotX, row.RotY, row.RotZ, row.RotW

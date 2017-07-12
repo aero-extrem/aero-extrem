@@ -57,11 +57,25 @@ public class ChaseCameraController extends InputAdapter {
 	//  Translation of chased object
 	private final	Vector3		chasedPos	= new Vector3();
 
+	private final Vector3 lastChasedPos = new Vector3();
+
 	//  Rotation of chased object
 	private final	Quaternion	chasedRot	= new Quaternion();
 
-	/*  Distance (Radius) between camera and chased object */
-	public			float		radius		= 5f;
+	public			float		defaultZoom	= 300f;
+
+	/** Distance (Radius) between camera and chased object */
+	public			float		radius		= defaultZoom;
+
+
+	/** Zoom speed (Exponent) */
+	public			float		zoomExp		= 1.005f;
+
+	/** Nearest allowed */
+	public 			float		minZoom		= 10f;
+
+	/** Furthest allowed */
+	public 			float		maxZoom		= 3000f;
 
 	/** Inclination of camera (like latitude on globe)
 	 *
@@ -74,13 +88,19 @@ public class ChaseCameraController extends InputAdapter {
 	public			float		phi			= 0f;
 
 	/** How many radians the camera moves each frame with key press */
-	public 			float		velocity	= .05f;
+	public 			float		velocity		= .05f;
 
 	/** How many radians the camera moves each pixel dragged */
 	public			float		radPerPixel	= 0.005f;
 
 	/** Should the camera rotate with the followed object? */
-	public 			boolean		fixAngle = true;
+	public 			boolean		fixAngle		= false;
+
+	/** Smooth camera movement */
+	public boolean flow = false;
+	public float flowSpeed = 0.001f;
+	private float deltaTheta = 0f;
+	private float deltaPhi = 0f;
 
 	/** Start chasing an object
 	 *
@@ -103,6 +123,12 @@ public class ChaseCameraController extends InputAdapter {
 			case 'm':
 			case 'M':
 				fixAngle = !fixAngle;
+				break;
+			case 'o':
+			case 'O':
+				deltaTheta = 0f;
+				deltaPhi = 0f;
+				flow = !flow;
 				break;
 		}
 		return false;
@@ -133,11 +159,28 @@ public class ChaseCameraController extends InputAdapter {
 
 	@Override
 	public boolean scrolled(int amount) {
-		radius = Math.max(5f, radius + amount * 0.2f);
+		float lastRadius = radius;
+		radius = (float) Math.pow((radius + amount * 0.2f), zoomExp);
+		if(amount < 0)
+			radius = lastRadius - (radius - lastRadius);
+
+		if(radius < minZoom)
+			radius = minZoom;
+		else if(radius > maxZoom)
+			radius = maxZoom;
+
 		return false;
 	}
 
 	private void handleKeys() {
+		if (flow) {
+			handleFlowKeys();
+		} else {
+			handleInstantKeys();
+		}
+	}
+
+	private void handleInstantKeys() {
 		if(keys.containsKey(UP))
 			theta += velocity;
 		if(keys.containsKey(DOWN))
@@ -157,6 +200,33 @@ public class ChaseCameraController extends InputAdapter {
 			phi = 2*PI - Math.abs(phi);
 	}
 
+	private void handleFlowKeys() {
+		if(keys.containsKey(UP))
+			deltaTheta += flowSpeed;
+		else if(keys.containsKey(DOWN))
+			deltaTheta -= flowSpeed;
+		else
+			deltaTheta = MathUtils.lerp(deltaTheta, 0, flowSpeed * 2);
+
+		if(keys.containsKey(LEFT))
+			deltaPhi += flowSpeed;
+		if(keys.containsKey(RIGHT))
+			deltaPhi -= flowSpeed;
+		else
+			deltaPhi = MathUtils.lerp(deltaPhi, 0, flowSpeed * 2);
+
+		theta = (theta + deltaTheta) % (2*PI);
+		phi = (phi + deltaPhi) % (2*PI);
+
+		if(phi < 0)
+			phi = 2*PI - Math.abs(phi);
+
+		if(theta < 0)
+			theta = 0;
+		else if(theta > PI)
+			theta = PI - FLOAT_ROUNDING_ERROR;
+	}
+
 	/** React to user input and update the camera position */
 	public void update() {
 		handleKeys();
@@ -164,12 +234,16 @@ public class ChaseCameraController extends InputAdapter {
 		chased.getTranslation(chasedPos);
 		chased.getRotation   (chasedRot);
 
+		chasedRot.nor();
+
 		// https://en.wikipedia.org/wiki/Spherical_coordinate_system
 		float dX = MathUtils.sin(theta) * MathUtils.cos(phi);
 		float dY = MathUtils.cos(theta);
 		float dZ = MathUtils.sin(theta) * MathUtils.sin(phi);
 
-		unit  .set(dX, dY, dZ).mul(chasedRot);
+		unit.set(dX, dY, dZ);
+		if(fixAngle)
+			unit.mul(chasedRot);
 		relPos.set(unit).scl(radius);
 
 		camera.position .set(chasedPos);
@@ -181,10 +255,13 @@ public class ChaseCameraController extends InputAdapter {
 		float upY = MathUtils.cos(theta - (PI/2));
 		float upZ = MathUtils.sin(theta - (PI/2)) * MathUtils.sin(phi);
 
+		camera.up.set(upX, upY, upZ);
 		if(fixAngle)
-			camera.up.set(upX, upY, upZ).mul(chasedRot);
+			camera.up.mul(chasedRot);
 
 		camera.update(false);
+
+		lastChasedPos.set(chasedPos);
 	}
 
 }

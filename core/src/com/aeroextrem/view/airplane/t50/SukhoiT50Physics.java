@@ -1,28 +1,30 @@
 package com.aeroextrem.view.airplane.t50;
 
-import com.aeroextrem.engine.common3d.behaviour.BehaviourPhysics;
-import com.aeroextrem.engine.common3d.resource.PhysicsInstance;
+import com.aeroextrem.engine.common3d.behaviour.BehaviourWholePhysics;
+import com.aeroextrem.engine.common3d.resource.WholePhysicsInstance;
 import com.aeroextrem.engine.resource.GameResource;
-import com.badlogic.gdx.math.Matrix4;
+import com.aeroextrem.view.airplane.test.TestPlaneData;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
-import com.badlogic.gdx.physics.bullet.dynamics.btFixedConstraint;
-import com.badlogic.gdx.physics.bullet.dynamics.btHingeConstraint;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import org.jetbrains.annotations.NotNull;
 
-import static com.aeroextrem.view.airplane.t50.SukhoiT50.*;
-
 /** Physikalische Eigenschaften */
-public class SukhoiT50Physics implements BehaviourPhysics {
+public class SukhoiT50Physics implements BehaviourWholePhysics {
 
 	// Liste der belegten Resourcen
 	private Array<Disposable> despos;
 
-	private PhysicsInstance instance;
+	private WholePhysicsInstance instance;
 	private btDynamicsWorld world;
+
+	private final TestPlaneData data;
+
+	public SukhoiT50Physics(TestPlaneData data) {
+		this.data = data;
+	}
 
 	@Override
 	public void onCreate(@NotNull GameResource resource) {
@@ -31,12 +33,14 @@ public class SukhoiT50Physics implements BehaviourPhysics {
 
 	/** Verbindungen zwischen Teilen erstellen */
 	@Override
-	public void onBindPhysics(@NotNull btDynamicsWorld world, @NotNull PhysicsInstance instance) {
+	public void onBindPhysics(@NotNull btDynamicsWorld world, @NotNull WholePhysicsInstance instance) {
 		this.world = world;
 		this.instance = instance;
 
+		instance.part.rb.setFriction(0);
+
 		// Connect fuselage -> parts
-		connectToBody(AILERON_LEFT, OFFSET_AILERON_LEFT);
+		/*connectToBody(AILERON_LEFT, OFFSET_AILERON_LEFT);
 		connectToBody(AILERON_RIGHT, OFFSET_AILERON_RIGHT);
 		connectToBody(FLAPS_LEFT, OFFSET_FLAPS_LEFT);
 		connectToBody(FLAPS_RIGHT, OFFSET_FLAPS_RIGHT);
@@ -50,14 +54,14 @@ public class SukhoiT50Physics implements BehaviourPhysics {
 
 		connectWheel(GEAR_WHEEL_FRONT, OFFSET_GEAR_WHEEL_FRONT);
 		connectWheel(GEAR_WHEEL_BACKLEFT, OFFSET_GEAR_WHEEL_BACKLEFT);
-		connectWheel(GEAR_WHEEL_BACKRIGHT, OFFSET_GEAR_WHEEL_BACKRIGHT);
+		connectWheel(GEAR_WHEEL_BACKRIGHT, OFFSET_GEAR_WHEEL_BACKRIGHT);*/
 	}
 
-	private void connectToBody(String node, Vector3 pos) {
+	/*private void connectToBody(String node, Vector3 pos) {
 		Matrix4 conn = new Matrix4().set(new Vector3(1f, 1f, 1f), new Quaternion());
 		Matrix4 conn2 = new Matrix4().set(pos, new Quaternion());
 		btFixedConstraint constraint = new btFixedConstraint(
-			instance.partMap.get(BODY).rb,
+			part.rb,
 			instance.partMap.get(node).rb,
 			conn, conn2
 		);
@@ -67,17 +71,48 @@ public class SukhoiT50Physics implements BehaviourPhysics {
 
 	private void connectWheel(String node, Vector3 pos) {
 		btHingeConstraint constraint = new btHingeConstraint(
-			instance.partMap.get(BODY).rb,
+			part.rb,
 			instance.partMap.get(node).rb,
 			pos, Vector3.Zero, Vector3.Z, Vector3.Z
 		);
 		despos.add(constraint);
 		instance.world.addConstraint(constraint);
-	}
+	}*/
 
 	@Override
 	public void physicsTick(float deltaTime) {
-		// TODO
+		Vector3 vel = instance.part.rb.getLinearVelocity();
+		instance.part.rb.applyForce(vel.scl(-Math.min(vel.len2() * 0.02f, 0.8f)), Vector3.Zero);
+		instance.part.rb.setAngularVelocity(instance.part.rb.getAngularVelocity().scl(0.2f));
+
+		forceOnPlane(calcForce(0f, 300 * data.pitch, 0f), 2f, 0f, 0f);
+		forceOnPlane(calcForce(0f, -300 * data.pitch, 0f), -2f, 0f, 0f);
+
+		forceOnPlane(calcForce(0f, 30 * data.roll, 0f), 0f, 0f, 2f);
+		forceOnPlane(calcForce(0f, -30 * data.roll, 0f), 0f, 0f, -2f);
+
+		forceOnPlane(calcForce(0f, 0f, 30 * data.yaw), 2f, 0f, 0f);
+		forceOnPlane(calcForce(0f, 0f, -30 * data.yaw), -2f, 0f, 0f);
+
+		forceOnPlane(calcForce(100f * data.thrust, 0f, 0f), -1f, 0f, 0f);
+	}
+
+	private final Vector3 helper2 = new Vector3();
+	private void forceOnPlane(Vector3 force, float posX, float posY, float posZ) {
+		instance.part.rb.applyForce(force, helper2.set(posX, posY, posZ));
+	}
+
+	private final Vector3 helper = new Vector3();
+	private Vector3 calcForce(float x, float y, float z) {
+		helper.set(x, y, z);
+		float len = helper.len();
+		helper.nor();
+
+		Quaternion quat = instance.part.rb.getOrientation();
+		helper.mul(quat);
+
+		helper.scl(len);
+		return helper;
 	}
 
 	@Override

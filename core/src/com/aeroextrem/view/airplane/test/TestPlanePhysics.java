@@ -37,7 +37,6 @@ public class TestPlanePhysics implements BehaviourPhysics {
 	/** Verbindungen zwischen Teilen erstellen */
 	@Override
 	public void onBindPhysics(@NotNull btDynamicsWorld world, @NotNull PhysicsInstance instance) {
-
 		this.instance = instance;
 		// Connect fuselage -> wings
 		Matrix4 conn = new Matrix4().set(new Vector3(1f, 1f, 1f), new Quaternion());
@@ -111,8 +110,13 @@ public class TestPlanePhysics implements BehaviourPhysics {
 	private final Vector3 helper = new Vector3();
 	private Vector3 calcForce(float x, float y, float z) {
 		helper.set(x, y, z);
+		float len = helper.len();
+		helper.nor();
+
 		Quaternion quat = instance.partMap.get(NODE_FUSELAGE).rb.getOrientation();
 		helper.mul(quat);
+
+		helper.scl(len);
 		return helper;
 	}
 

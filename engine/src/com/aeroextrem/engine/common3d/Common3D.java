@@ -47,6 +47,7 @@ public abstract class Common3D extends ScenarioAdapter {
 	// Behaviours
 	private Array<BehaviourVisual> behavioursVisual;
 	private Array<BehaviourPhysics> behavioursPhysics;
+	private Array<BehaviourWholePhysics> behavioursWholePhysics;
 	private Array<BehaviourInput> behavioursInput;
 	private InputMappedMultiplexer behavioursInputProcessors;
 	protected static final String INPUT_BEHAVIOURS = "behaviours";
@@ -100,6 +101,7 @@ public abstract class Common3D extends ScenarioAdapter {
 		despos = new Array<>();
 		behavioursVisual = new Array<>();
 		behavioursPhysics = new Array<>();
+		behavioursWholePhysics = new Array<>();
 		behavioursInput = new Array<>();
 		behavioursInputProcessors = new InputMappedMultiplexer();
 		inputProcessor.putProcessor(INPUT_BEHAVIOURS, behavioursInputProcessors);
@@ -204,6 +206,8 @@ public abstract class Common3D extends ScenarioAdapter {
 		final float delta = Math.min(1f / 30f, Gdx.graphics.getDeltaTime());
 		for(BehaviourPhysics phys : behavioursPhysics)
 			phys.physicsTick(delta);
+		for(BehaviourWholePhysics phys : behavioursWholePhysics)
+			phys.physicsTick(delta);
 		dynamicsWorld.stepSimulation(delta, 5, 1 / 60f);
 	}
 
@@ -252,6 +256,19 @@ public abstract class Common3D extends ScenarioAdapter {
 
 		// Änderungen schreiben
 		instances.put(id, new BehavingInstance<>(modelInstance));
+
+		int count = getInstanceCount(res);
+		instanceCount.put(res, count+1);
+
+		return id;
+	}
+
+	public InstanceIdentifier spawn(@NotNull WholePhysicsResource res) {
+		InstanceIdentifier id = new InstanceIdentifier(res, rand.nextInt());
+
+		WholePhysicsInstance physInstance = new WholePhysicsInstance(res, dynamicsWorld);
+
+		instances.put(id, new BehavingInstance<>(physInstance));
 
 		int count = getInstanceCount(res);
 		instanceCount.put(res, count+1);
@@ -332,6 +349,20 @@ public abstract class Common3D extends ScenarioAdapter {
 			return false;
 
 		behaviour.onCreate(key.resource);
+
+		if(!handleAddBehaviour(key, name, behaviour, instance))
+			return false;
+
+		instance.behaviours.put(name, behaviour);
+		return true;
+	}
+
+	protected <T extends ModelInstance> boolean handleAddBehaviour(
+			@NotNull InstanceIdentifier key,
+			@NotNull String name,
+			@NotNull BehaviourBase behaviour,
+			@NotNull BehavingInstance<T> instance
+	) {
 		// FIXME Hässlicher Code
 		if(behaviour instanceof BehaviourVisual) {
 			((BehaviourVisual) behaviour).onCreateVisuals(instance.instance);
@@ -345,13 +376,19 @@ public abstract class Common3D extends ScenarioAdapter {
 			((BehaviourPhysics) behaviour).onBindPhysics(dynamicsWorld, (PhysicsInstance) instance.instance);
 			behavioursPhysics.add((BehaviourPhysics) behaviour);
 		}
+		if(behaviour instanceof BehaviourWholePhysics) {
+			if(!(instance.instance instanceof WholePhysicsInstance)) {
+				System.err.println("Engine: Trief to apply a whole physical behaviour on a non-whole-physical instance");
+				return false;
+			}
+			((BehaviourWholePhysics) behaviour).onBindPhysics(dynamicsWorld, (WholePhysicsInstance) instance.instance);
+			behavioursWholePhysics.add((BehaviourWholePhysics) behaviour);
+		}
 		if(behaviour instanceof BehaviourInput) {
 			InputProcessor processor = ((BehaviourInput) behaviour).onBindInput();
 			behavioursInput.add((BehaviourInput) behaviour);
 			behavioursInputProcessors.putProcessor(key.toString() + name, processor);
 		}
-
-		instance.behaviours.put(name, behaviour);
 		return true;
 	}
 

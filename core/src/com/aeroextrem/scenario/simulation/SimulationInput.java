@@ -16,6 +16,13 @@ class SimulationInput extends InputAdapter {
 	}
 
 	@Override
+	public boolean keyTyped(char c) {
+		sim.spawnBox = c == 'j' || c == 'J';
+
+		return false;
+	}
+
+	@Override
 	public boolean keyUp (int keycode) {
 		switch (keycode) {
 			case Keys.ESCAPE:

@@ -1,41 +1,44 @@
 package com.aeroextrem.view.airplane.t50;
 
 import com.aeroextrem.engine.common3d.resource.PhysicsInfo;
-import com.aeroextrem.engine.common3d.resource.PhysicsResource;
+import com.aeroextrem.engine.common3d.resource.WholePhysicsResource;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
 import com.badlogic.gdx.physics.bullet.collision.btCapsuleShapeX;
-import com.badlogic.gdx.utils.ArrayMap;
 import org.jetbrains.annotations.NotNull;
 
-import static com.aeroextrem.engine.common3d.resource.PhysicsInfo.*;
-import static com.aeroextrem.view.airplane.t50.SukhoiT50.*;
+import static com.aeroextrem.engine.common3d.resource.PhysicsInfo.GROUP_AIRPLANE;
+import static com.aeroextrem.engine.common3d.resource.PhysicsInfo.GROUP_WORLD;
 
 /** https://en.wikipedia.org/wiki/Sukhoi_PAK_FA
  *
  * @author terorie
  * @author oldfrizt */
-public class SukhoiT50Resource implements PhysicsResource {
+public class SukhoiT50Resource implements WholePhysicsResource {
 
 	private AssetManager assetMgr;
 	private Model model;
-	private ArrayMap<String, PhysicsInfo> physicsNodes;
+	//private ArrayMap<String, PhysicsInfo> physicsNodes;
+	private PhysicsInfo physics;
 
 	@Override
 	public void load() {
 		assetMgr = new AssetManager();
 		assetMgr.load("T-50.g3db", Model.class);
 
-		physicsNodes = new ArrayMap<>();
+		/*physicsNodes = new ArrayMap<>();
 		physicsNodes.put(BODY, new PhysicsInfo(
 			new btCapsuleShapeX(0.5f, 8f),
 			4f,
 			GROUP_AIRPLANE, GROUP_WORLD
-		));
+		));*/
+		physics = new PhysicsInfo(
+			new btCapsuleShapeX(0.5f, 8f),
+			4f,
+			GROUP_AIRPLANE, GROUP_WORLD
+		);
 
-		PhysicsInfo toDoShape = new PhysicsInfo(
+		/*PhysicsInfo toDoShape = new PhysicsInfo(
 			new btBoxShape(new Vector3(.1f, .1f, .1f)),
 			1f,
 			GROUP_AIRPLANE, GROUP_WORLD
@@ -54,7 +57,7 @@ public class SukhoiT50Resource implements PhysicsResource {
 		physicsNodes.put(GEAR_ROD_FRONT, toDoShape);
 		physicsNodes.put(GEAR_WHEEL_BACKLEFT, toDoShape);
 		physicsNodes.put(GEAR_WHEEL_BACKRIGHT, toDoShape);
-		physicsNodes.put(GEAR_WHEEL_FRONT, toDoShape);
+		physicsNodes.put(GEAR_WHEEL_FRONT, toDoShape);*/
 	}
 
 	@Override
@@ -72,10 +75,16 @@ public class SukhoiT50Resource implements PhysicsResource {
 		return model;
 	}
 
-	@Override
+	/*@Override
 	@NotNull
 	public ArrayMap<String, PhysicsInfo> getPhysicsNodes() {
 		return physicsNodes;
+	}*/
+
+	@Override
+	@NotNull
+	public PhysicsInfo getPhysicsInfo() {
+		return physics;
 	}
 
 	@Override
